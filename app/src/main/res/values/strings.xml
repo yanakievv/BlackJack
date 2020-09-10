@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">BlackJack</string>
+    <string name="Hit">Hit</string>
+    <string name="Split">Split</string>
+    <string name="Double">Double</string>
+    <string name="Stand">Stand</string>
+</resources>
