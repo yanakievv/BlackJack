@@ -169,12 +169,31 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         {
             Game.playerSum -= 10
             Game.playerAce = false
+            if (Integer.valueOf(playerCard1.text.toString()) == 11)
+            {
+                playerCard1.text = "1"
+            }
+            else if (Integer.valueOf(playerCard2.text.toString()) == 11)
+            {
+                playerCard2.text = "1"
+            }
+            else
+            {
+                for (i in Game.playerArr)
+                {
+                    if (Integer.valueOf(i.text.toString()) == 11)
+                    {
+                        i.text = "1"
+                        break
+                    }
+                }
+            }
         }
         else if (Game.playerSum == 21)
         {
             if (Game.hasSplit)
             {
-                Toast.makeText(this, "Hand #1: BlackJack!",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Hand #1: 21!",Toast.LENGTH_SHORT).show()
                 Game.hasSplit = false
                 Game.playerSplitSum = Game.playerSum
                 Game.playerIndex = 3
@@ -184,22 +203,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
             else if (Game.hasHadSplit)
             {
-                Toast.makeText(this, "Hand #2: BlackJack!",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Hand #2: 21!",Toast.LENGTH_SHORT).show()
                 dealerTurn()
             }
             else
             {
-                Toast.makeText(this, "BlackJack!",Toast.LENGTH_SHORT).show()
-
-                val finalIntent = Intent(this, FinalActivity::class.java)
-                finalIntent.putExtra("username", Game.userName)
-                finalIntent.putExtra("outcome","BlackJack!")
-                finalIntent.putExtra("player", "")
-                finalIntent.putExtra("dealer","")
-                finalIntent.putExtra("split", "f")
-                Timer("pause", false).schedule(2000) {
-                    startActivity(finalIntent)
-                }
+                Toast.makeText(this, "21!",Toast.LENGTH_SHORT).show()
+                dealerTurn()
             }
         }
 
@@ -222,6 +232,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 Game.dealerHadTurn = true
             }
             dealerCard1.text = Game.it.next().toString()
+            if (Integer.valueOf(dealerCard1.text.toString()) == 11)
+            {
+                Game.dealerAce = true
+            }
             Game.dealerSum += Integer.valueOf(dealerCard1.text.toString())
 
 
@@ -234,10 +248,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             {
                 val tempCard: Int = Game.it.next()
 
-                if (tempCard == 11 && Game.dealerAce)
-                {
-                    Game.dealerSum -= 10
-                }
                 if (tempCard == 11)
                 {
                     Game.dealerAce = true
@@ -247,6 +257,30 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
                 Game.dealerSum += tempCard
                 Game.dealerIndex++
+
+                if (Game.dealerSum > 21 && Game.dealerAce)
+                {
+                    Game.dealerSum -= 10
+                    if (Integer.valueOf(dealerCard1.text.toString()) == 11)
+                    {
+                        dealerCard1.text = "1"
+                    }
+                    else if (Integer.valueOf(dealerCard2.text.toString()) == 11)
+                    {
+                        dealerCard2.text = "1"
+                    }
+                    else
+                    {
+                        for (i in Game.dealerArr)
+                        {
+                            if (Integer.valueOf(i.text.toString()) == 11)
+                            {
+                                i.text = "1"
+                                break
+                            }
+                        }
+                    }
+                }
 
             }
 
