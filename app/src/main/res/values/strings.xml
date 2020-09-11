@@ -4,4 +4,9 @@
     <string name="Split">Split</string>
     <string name="Double">Double</string>
     <string name="Stand">Stand</string>
+    <string name="change_user">Change User</string>
+    <string name="enter_username">Enter Username</string>
+    <string name="restart">Restart</string>
+    <string name="background">Background</string>
+    <string name="chipButton">Chip Button</string>
 </resources>

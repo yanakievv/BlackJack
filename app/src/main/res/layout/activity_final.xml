@@ -10,6 +10,7 @@
         android:id="@+id/imageView"
         android:layout_width="729dp"
         android:layout_height="729dp"
+        android:contentDescription="@string/background"
         android:rotation="90"
         android:scaleType="centerInside"
         android:scaleX="2.5"
@@ -26,7 +27,7 @@
         android:layout_height="125dp"
         android:layout_marginBottom="50dp"
         android:background="@null"
-        android:contentDescription="restart"
+        android:contentDescription="@string/restart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -127,4 +128,14 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/restartButton" />
+
+    <Button
+        android:id="@+id/changeUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="15dp"
+        android:text="@string/change_user"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

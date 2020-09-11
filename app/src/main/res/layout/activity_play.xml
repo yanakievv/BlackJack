@@ -10,6 +10,7 @@
         android:id="@+id/imageView"
         android:layout_width="729dp"
         android:layout_height="729dp"
+        android:contentDescription="@string/background"
         android:rotation="90"
         android:scaleType="centerInside"
         android:scaleX="2.5"
@@ -25,11 +26,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@null"
+        android:contentDescription="@string/chipButton"
         android:elevation="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/output_onlinepngtools" />
+
+    <EditText
+        android:id="@+id/userNameText"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="50dp"
+        android:autofillHints=""
+        android:background="#00FF0000"
+        android:backgroundTint="#000000"
+        android:gravity="center_horizontal"
+        android:hint="@string/enter_username"
+        android:inputType="text"
+        android:shadowColor="#000000"
+        android:shadowDx="10"
+        android:shadowDy="10"
+        android:shadowRadius="10"
+        android:textColor="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/startButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

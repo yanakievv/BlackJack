@@ -1,5 +1,6 @@
 package com.example.blackjack
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -11,13 +12,24 @@ object Counter
     var dealerCnt: Int = 0
     var combo: Int = 0
     var onStreak: Boolean = false
+    var userName: String = "Player"
+
+    fun reset()
+    {
+        playerCnt = 0
+        dealerCnt = 0
+        combo = 0
+        onStreak = false
+    }
 }
 
 class FinalActivity : AppCompatActivity() {
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_final)
 
+        Counter.userName = intent.getStringExtra("username") as String
 
         if (savedInstanceState == null)
         {
@@ -46,26 +58,26 @@ class FinalActivity : AppCompatActivity() {
                 finalText.text = outcome
                 if (outcome != "BlackJack!" && outcome != "Bust!")
                 {
-                    playerScore.text = "Player: ${playerSum}"
+                    playerScore.text = "${Counter.userName}: ${playerSum}"
                     dealerScore.text = "Dealer: ${dealerSum}"
                 }
                 else if (outcome == "Bust!")
                 {
-                    playerScore.text = "Player: ${playerSum}"
+                    playerScore.text = "${Counter.userName}: ${playerSum}"
                 }
             }
             else
             {
                 finalText.text = "Dealer: ${outcome}"
-                dealerScore.text = "Player hand #1: ${playerSum}"
-                playerScore.text = "Player hand #2: ${dealerSum}"
-                if (Integer.valueOf(outcome.toString()) > Integer.valueOf(playerSum.toString()))
+                dealerScore.text = "${Counter.userName} hand #1: ${playerSum}"
+                playerScore.text = "${Counter.userName} hand #2: ${dealerSum}"
+                if (Integer.valueOf(outcome.toString()) > Integer.valueOf(playerSum.toString()) && (Integer.valueOf(outcome.toString()) <= 21))
                 {
                     Counter.dealerCnt++
                     Counter.onStreak = false
                     Counter.combo = 0
                 }
-                else if (Integer.valueOf(outcome.toString()) < Integer.valueOf(playerSum.toString()))
+                else if (Integer.valueOf(outcome.toString()) < Integer.valueOf(playerSum.toString()) && (Integer.valueOf(playerSum.toString()) <= 21))
                 {
                     if (!Counter.onStreak)
                     {
@@ -74,13 +86,13 @@ class FinalActivity : AppCompatActivity() {
                     Counter.combo++
                     Counter.playerCnt++
                 }
-                if (Integer.valueOf(outcome.toString()) > Integer.valueOf(dealerSum.toString()))
+                if (Integer.valueOf(outcome.toString()) > Integer.valueOf(dealerSum.toString()) && (Integer.valueOf(outcome.toString()) <= 21))
                 {
                     Counter.dealerCnt++
                     Counter.onStreak = false
                     Counter.combo = 0
                 }
-                else if (Integer.valueOf(outcome.toString()) < Integer.valueOf(dealerSum.toString()))
+                else if (Integer.valueOf(outcome.toString()) < Integer.valueOf(dealerSum.toString()) && (Integer.valueOf(dealerSum.toString()) <= 21))
                 {
                     if (!Counter.onStreak)
                     {
@@ -91,7 +103,7 @@ class FinalActivity : AppCompatActivity() {
                 }
             }
 
-            playerCount.text = "Player won: ${Counter.playerCnt}"
+            playerCount.text = "${Counter.userName} won: ${Counter.playerCnt}"
             dealerCount.text = "Dealer won: ${Counter.dealerCnt}"
             streakCounter.text = "Current Streak: ${Counter.combo}"
         }
@@ -99,7 +111,14 @@ class FinalActivity : AppCompatActivity() {
 
         restartButton.setOnClickListener{
             val restartGame = Intent(applicationContext, MainActivity::class.java)
+            restartGame.putExtra("username", Counter.userName)
             startActivity(restartGame)
+        }
+
+        changeUser.setOnClickListener{
+            Counter.reset()
+            val changePlayer = Intent(applicationContext, PlayActivity::class.java)
+            startActivity(changePlayer)
         }
 
     }
@@ -113,6 +132,7 @@ class FinalActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
 
@@ -120,9 +140,11 @@ class FinalActivity : AppCompatActivity() {
         playerScore.text = savedInstanceState.getString("playersc")
         dealerScore.text = savedInstanceState.getString("dealersc")
 
-        playerCount.text = "Player won: ${Counter.playerCnt}"
+        playerCount.text = "${Counter.userName} won: ${Counter.playerCnt}"
         dealerCount.text = "Dealer won: ${Counter.dealerCnt}"
         streakCounter.text = "Current Streak: ${Counter.combo}"
     }
+
+
 }
 

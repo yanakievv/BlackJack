@@ -1,6 +1,7 @@
 package com.example.blackjack
 
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -68,7 +69,6 @@ object Game {
         10,
         11
     )
-
     var playerSum: Int = 0
     var playerSplitSum: Int = 0
     var dealerSum: Int = 0
@@ -83,8 +83,13 @@ object Game {
 
     var playerAce: Boolean = false
     var dealerAce: Boolean = false
+
     var hasSplit: Boolean = false
     var hasHadSplit: Boolean = false
+
+    var userName: String = "Player"
+
+    var dealerHadTurn: Boolean = false
 }
 
 
@@ -115,7 +120,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         if (Game.playerIndex == Game.playerArr.size - 1)
         {
             dealerTurn()
-            return
         }
 
         val newCard: Int = Game.it.next()
@@ -126,6 +130,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         Game.playerArr[Game.playerIndex].text = newCard.toString()
+
         Game.playerIndex++
 
         Thread.sleep(500)
@@ -150,6 +155,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             {
                 Toast.makeText(this, "Bust!",Toast.LENGTH_SHORT).show()
                 val finalIntent = Intent(this, FinalActivity::class.java)
+                finalIntent.putExtra("username", Game.userName)
                 finalIntent.putExtra("outcome","Bust!")
                 finalIntent.putExtra("player", Game.playerSum.toString())
                 finalIntent.putExtra("dealer", Game.dealerSum.toString())
@@ -186,6 +192,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 Toast.makeText(this, "BlackJack!",Toast.LENGTH_SHORT).show()
 
                 val finalIntent = Intent(this, FinalActivity::class.java)
+                finalIntent.putExtra("username", Game.userName)
                 finalIntent.putExtra("outcome","BlackJack!")
                 finalIntent.putExtra("player", "")
                 finalIntent.putExtra("dealer","")
@@ -206,8 +213,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
         if (!Game.hasSplit)
         {
+            if (Game.dealerHadTurn)
+            {
+                return
+            }
+            else
+            {
+                Game.dealerHadTurn = true
+            }
             dealerCard1.text = Game.it.next().toString()
             Game.dealerSum += Integer.valueOf(dealerCard1.text.toString())
+
 
             if (Integer.valueOf(dealerCard1.text.toString()) == 11 && Game.dealerAce)
             {
@@ -224,7 +240,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 }
                 if (tempCard == 11)
                 {
-                    Game.dealerAce = true;
+                    Game.dealerAce = true
                 }
 
                 Game.dealerArr[Game.dealerIndex].text = tempCard.toString()
@@ -239,6 +255,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             if (Game.hasHadSplit)
             {
                 finalIntent.putExtra("split", "t")
+                finalIntent.putExtra("username", Game.userName)
                 finalIntent.putExtra("outcome", Game.dealerSum.toString())
                 finalIntent.putExtra("player", Game.playerSplitSum.toString())
                 finalIntent.putExtra("dealer", Game.playerSum.toString())
@@ -271,6 +288,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
             else
             {
+                finalIntent.putExtra("username", Game.userName)
                 finalIntent.putExtra("player", Game.playerSum.toString())
                 finalIntent.putExtra("dealer", Game.dealerSum.toString())
                 finalIntent.putExtra("split", "f")
@@ -317,9 +335,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         {
             hitAction()
             dealerTurn()
+
+
         }
     }
 
+    @SuppressLint("SetTextI18n")
     fun splitAction()
     {
         if (Game.playerIndex == 0 && Integer.valueOf(playerCard1.text.toString()) == Game.playerSum / 2)
@@ -342,6 +363,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     fun initGame()
     {
         Game.cards.shuffle()
+        Game.dealerHadTurn = false
+        Game.userName = intent.getStringExtra("username") as String
+        if (Game.userName == "")
+        {
+            Game.userName = "Player"
+        }
 
         Game.it = Game.cards.iterator()
 
@@ -392,6 +419,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         {
             Toast.makeText(this, "Blackjack!", Toast.LENGTH_SHORT).show()
             val finalIntent = Intent(this, FinalActivity::class.java)
+            finalIntent.putExtra("username", Game.userName)
             finalIntent.putExtra("outcome","BlackJack!")
             finalIntent.putExtra("player", "")
             finalIntent.putExtra("dealer","")
