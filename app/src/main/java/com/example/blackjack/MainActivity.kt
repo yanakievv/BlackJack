@@ -261,6 +261,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 if (Game.dealerSum > 21 && Game.dealerAce)
                 {
                     Game.dealerSum -= 10
+                    Game.dealerAce = false
+
                     if (Integer.valueOf(dealerCard1.text.toString()) == 11)
                     {
                         dealerCard1.text = "1"
