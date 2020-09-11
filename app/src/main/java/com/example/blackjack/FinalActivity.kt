@@ -69,15 +69,15 @@ class FinalActivity : AppCompatActivity() {
             else
             {
                 finalText.text = "Dealer: ${outcome}"
-                dealerScore.text = "${Counter.userName} hand #1: ${playerSum}"
                 playerScore.text = "${Counter.userName} hand #2: ${dealerSum}"
-                if (Integer.valueOf(outcome.toString()) > Integer.valueOf(playerSum.toString()) && (Integer.valueOf(outcome.toString()) <= 21))
+                dealerScore.text = "${Counter.userName} hand #1: ${playerSum}"
+                if ((Integer.valueOf(outcome.toString()) > Integer.valueOf(playerSum.toString()) && (Integer.valueOf(outcome.toString()) <= 21)) || (Integer.valueOf(playerSum.toString()) > 21))
                 {
                     Counter.dealerCnt++
                     Counter.onStreak = false
                     Counter.combo = 0
                 }
-                else if (Integer.valueOf(outcome.toString()) < Integer.valueOf(playerSum.toString()) && (Integer.valueOf(playerSum.toString()) <= 21))
+                else if ((Integer.valueOf(outcome.toString()) < Integer.valueOf(playerSum.toString()) && (Integer.valueOf(playerSum.toString()) <= 21)) || (Integer.valueOf(outcome.toString()) > 21))
                 {
                     if (!Counter.onStreak)
                     {
@@ -86,13 +86,13 @@ class FinalActivity : AppCompatActivity() {
                     Counter.combo++
                     Counter.playerCnt++
                 }
-                if (Integer.valueOf(outcome.toString()) > Integer.valueOf(dealerSum.toString()) && (Integer.valueOf(outcome.toString()) <= 21))
+                if ((Integer.valueOf(outcome.toString()) > Integer.valueOf(dealerSum.toString()) && (Integer.valueOf(outcome.toString()) <= 21)) || (Integer.valueOf(playerSum.toString()) > 21))
                 {
                     Counter.dealerCnt++
                     Counter.onStreak = false
                     Counter.combo = 0
                 }
-                else if (Integer.valueOf(outcome.toString()) < Integer.valueOf(dealerSum.toString()) && (Integer.valueOf(dealerSum.toString()) <= 21))
+                else if ((Integer.valueOf(outcome.toString()) < Integer.valueOf(dealerSum.toString()) && (Integer.valueOf(dealerSum.toString()) <= 21)) || (Integer.valueOf(outcome.toString()) > 21))
                 {
                     if (!Counter.onStreak)
                     {

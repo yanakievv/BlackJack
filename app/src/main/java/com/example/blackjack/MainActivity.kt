@@ -69,6 +69,7 @@ object Game {
         10,
         11
     )
+
     var playerSum: Int = 0
     var playerSplitSum: Int = 0
     var dealerSum: Int = 0
@@ -117,11 +118,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     fun hitAction()
     {
-        if (Game.playerIndex == Game.playerArr.size - 1)
-        {
-            dealerTurn()
-        }
-
         val newCard: Int = Game.it.next()
 
         if (newCard == 11)
@@ -132,10 +128,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         Game.playerArr[Game.playerIndex].text = newCard.toString()
 
         Game.playerIndex++
-
-        Thread.sleep(500)
-
         Game.playerSum += newCard
+
+        if (Game.playerIndex == Game.playerArr.size)
+        {
+            dealerTurn()
+        }
+
         if (Game.playerSum > 21 && !Game.playerAce)
         {
             if (Game.hasSplit)
@@ -165,7 +164,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
         }
-        else if (Game.playerSum > 21 && Game.playerAce)
+        else if (Game.playerSum > 21 && Game.playerAce && !Game.hasHadSplit)
         {
             Game.playerSum -= 10
             Game.playerAce = false
@@ -179,12 +178,61 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
             else
             {
-                for (i in Game.playerArr)
+                for (i in (Game.playerIndex..Game.playerArr.size))
                 {
-                    if (Integer.valueOf(i.text.toString()) == 11)
+                    if (Integer.valueOf(Game.playerArr[i].text.toString()) == 11)
                     {
-                        i.text = "1"
+                        Game.playerArr[i].text = "1"
                         break
+                    }
+                }
+            }
+        }
+        else if (Game.playerSum > 21 && Game.playerAce && Game.hasHadSplit)
+        {
+            Game.playerSum -= 10
+            Game.playerAce = false
+            if (Game.hasSplit)
+            {
+                if (Integer.valueOf(hand1card1.text.toString()) == 11)
+                {
+                    hand1card1.text = "1"
+                }
+                else if (Integer.valueOf(hand1card2.text.toString()) == 11)
+                {
+                    hand1card2.text = "1"
+                }
+                else
+                {
+                    for (i in (Game.playerIndex..Game.playerArr.size))
+                    {
+                        if (Integer.valueOf(Game.playerArr[i].text.toString()) == 11)
+                        {
+                            Game.playerArr[i].text = "1"
+                            break
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (Integer.valueOf(hand2card1.text.toString()) == 11)
+                {
+                    hand2card1.text = "1"
+                }
+                else if (Integer.valueOf(hand2card2.text.toString()) == 11)
+                {
+                    hand2card2.text = "1"
+                }
+                else
+                {
+                    for (i in (Game.playerIndex..Game.playerArr.size))
+                    {
+                        if (Integer.valueOf(Game.playerArr[i].text.toString()) == 11)
+                        {
+                            Game.playerArr[i].text = "1"
+                            break
+                        }
                     }
                 }
             }
@@ -255,10 +303,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
                 Game.dealerArr[Game.dealerIndex].text = tempCard.toString()
 
-                Game.dealerSum += tempCard
-                Game.dealerIndex++
-
-                if (Game.dealerSum > 21 && Game.dealerAce)
+                if (Game.dealerSum + tempCard > 21 && Game.dealerAce)
                 {
                     Game.dealerSum -= 10
                     Game.dealerAce = false
@@ -273,7 +318,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     }
                     else
                     {
-                        for (i in Game.dealerArr)
+                        for (i in Game.dealerArr.reversed())
                         {
                             if (Integer.valueOf(i.text.toString()) == 11)
                             {
@@ -283,6 +328,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                         }
                     }
                 }
+
+                Game.dealerSum += tempCard
+                Game.dealerIndex++
 
             }
 
@@ -398,7 +446,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     fun initGame()
     {
-        Game.cards.shuffle()
+        //Game.cards.shuffle()
         Game.dealerHadTurn = false
         Game.userName = intent.getStringExtra("username") as String
         if (Game.userName == "")
