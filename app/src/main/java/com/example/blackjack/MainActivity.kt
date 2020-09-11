@@ -113,7 +113,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         Game.playerArr.add(hand2card3)
         Game.playerArr.add(hand2card4)
 
-
     }
 
     fun hitAction()
@@ -260,7 +259,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 dealerTurn()
             }
         }
-
     }
 
     fun dealerTurn()
@@ -398,8 +396,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             Timer("pause", false).schedule(2000) {
                 startActivity(finalIntent)
             }
-
-
         }
         else
         {
@@ -409,8 +405,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             Game.playerIndex = 3
             hitAction()
         }
-
-
     }
 
     fun doubleAction()
@@ -419,8 +413,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         {
             hitAction()
             dealerTurn()
-
-
         }
     }
 
@@ -439,7 +431,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             playerCard2.text = ""
 
             hitAction()
-
         }
     }
 
@@ -494,7 +485,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             Game.playerAce = true
         }
 
-
         Game.dealerSum += Integer.valueOf(dealerCard2.text.toString())
         Game.playerSum += Integer.valueOf(playerCard1.text.toString())
         Game.playerSum += Integer.valueOf(playerCard2.text.toString())
@@ -511,7 +501,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             Timer("pause", false).schedule(2000) {
                 startActivity(finalIntent)
             }
-
         }
     }
 
@@ -530,9 +519,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         {
             initGame()
         }
-
-
-
     }
 
     override fun onClick(v: View) {
@@ -541,7 +527,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             R.id.buttonPass -> dealerTurn()
             R.id.buttonDouble -> doubleAction()
             R.id.buttonSplit -> splitAction()
-
             }
     }
 
@@ -578,8 +563,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             putString("dealer3", dealerCard3.text.toString())
             putString("dealer4", dealerCard4.text.toString())
             putString("dealer5", dealerCard5.text.toString())
-
-
         }
 
         super.onSaveInstanceState(outState)
@@ -631,7 +614,5 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         dealerCard5.text = savedInstanceState.getString("dealer5")
 
     }
-
-
 
 }
