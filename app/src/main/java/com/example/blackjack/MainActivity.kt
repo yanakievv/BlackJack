@@ -117,6 +117,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     fun hitAction()
     {
+        disableButtons()
+
         val newCard: Int = Game.it.next()
 
         if (newCard == 11)
@@ -259,10 +261,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 dealerTurn()
             }
         }
+
+        enableButtons()
     }
 
     fun dealerTurn()
     {
+        disableButtons()
+
         if (!Game.hasHadSplit && Game.playerSum > 21)
         {
             return
@@ -437,9 +443,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     fun initGame()
     {
-        //Game.cards.shuffle()
+        Game.cards.shuffle()
         Game.dealerHadTurn = false
-        Game.userName = intent.getStringExtra("username") as String
+
         if (Game.userName == "")
         {
             Game.userName = "Player"
@@ -517,6 +523,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         if (savedInstanceState == null)
         {
+            Game.userName = intent.getStringExtra("username") as String
             initGame()
         }
     }
@@ -613,6 +620,21 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         dealerCard4.text = savedInstanceState.getString("dealer4")
         dealerCard5.text = savedInstanceState.getString("dealer5")
 
+    }
+
+    fun disableButtons()
+    {
+        buttonHit.isClickable = false
+        buttonDouble.isClickable = false
+        buttonPass.isClickable = false
+        buttonSplit.isClickable = false
+    }
+    fun enableButtons()
+    {
+        buttonHit.isClickable = true
+        buttonDouble.isClickable = true
+        buttonPass.isClickable = true
+        buttonSplit.isClickable = true
     }
 
 }
