@@ -77,7 +77,7 @@ class FinalActivity : AppCompatActivity() {
                     Counter.combo++
                     Counter.playerCnt++
                 }
-                if ((Integer.valueOf(outcome.toString()) > Integer.valueOf(dealerSum.toString()) && (Integer.valueOf(outcome.toString()) <= 21)) || (Integer.valueOf(playerSum.toString()) > 21)) {
+                if ((Integer.valueOf(outcome.toString()) > Integer.valueOf(dealerSum.toString()) && (Integer.valueOf(outcome.toString()) <= 21)) || (Integer.valueOf(dealerSum.toString()) > 21)) {
                     Counter.dealerCnt++
                     Counter.onStreak = false
                     Counter.combo = 0

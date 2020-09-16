@@ -185,10 +185,6 @@ class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivit
             }
             game.dealerSum += game.dealerArr[0].value
 
-            if (game.dealerArr[0].value == 11 && game.dealerAce) {
-                game.dealerSum -= 10
-            }
-
             while (game.dealerSum < 17) {
 
                 if (game.dealerArr.size == 5){
@@ -235,7 +231,7 @@ class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivit
     }
 
     override fun splitAction() {
-        if (game.playerArr.size == 2 && game.playerArr[0].value == game.playerArr[1].value) {
+        if (game.playerArr.size == 2 && game.playerArr[0].value == game.playerArr[1].value && !game.hasHadSplit) {
             initSplit()
         }
     }
@@ -264,7 +260,7 @@ class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivit
     }
 
     override fun doubleAction() {
-        if (game.playerArr.size == 2 || (game.hasHadSplit && (game.playerArr.size == 2 || game.playerSplitArr.size == 2))) {
+        if (game.playerArr.size == 2 || (game.hasHadSplit && game.playerSplitArr.size == 2)) {
             hitAction()
             dealerTurn()
         }
@@ -287,7 +283,6 @@ class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivit
 
         view?.cleanUpView()
     }
-
 }
 
 

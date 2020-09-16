@@ -40,7 +40,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
 
         setPresenter(MainActivityPresenter(this))
 
-        presenter.init()
+        if (savedInstanceState == null) {
+            presenter.init()
+        }
+
 
     }
 
@@ -101,7 +104,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
         playerSplitView.add(hand2card6)
 
         refreshView()
-
     }
 
     override fun refreshView() {
@@ -127,78 +129,28 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
 
     override fun bust() {
         Toast.makeText(this, "Bust!", Toast.LENGTH_SHORT).show()
-        val finalIntent = Intent(this, FinalActivity::class.java)
-        finalIntent.putExtra("username", presenter.getUsername())
-        finalIntent.putExtra("outcome","Bust!")
-        finalIntent.putExtra("player", presenter.getPlayerSum().toString())
-        finalIntent.putExtra("dealer", presenter.getDealerSum().toString())
-        finalIntent.putExtra("split", "f")
-        Timer("pause", false).schedule(2000) {
-            startActivity(finalIntent)
-        }
+        finalizeActivity("Bust!")
     }
 
     override fun win() {
-        val finalIntent = Intent(this, FinalActivity::class.java)
-        finalIntent.putExtra("username", presenter.getUsername())
-        finalIntent.putExtra("outcome","Winner!")
-        finalIntent.putExtra("player", presenter.getPlayerSum().toString())
-        finalIntent.putExtra("dealer", presenter.getDealerSum().toString())
-        finalIntent.putExtra("split", "f")
-        Timer("pause", false).schedule(2000) {
-            startActivity(finalIntent)
-        }
-
+        finalizeActivity("Winner!")
     }
 
     override fun loss() {
-        val finalIntent = Intent(this, FinalActivity::class.java)
-        finalIntent.putExtra("username", presenter.getUsername())
-        finalIntent.putExtra("outcome","Dealer won.")
-        finalIntent.putExtra("player", presenter.getPlayerSum().toString())
-        finalIntent.putExtra("dealer", presenter.getDealerSum().toString())
-        finalIntent.putExtra("split", "f")
-        Timer("pause", false).schedule(2000) {
-            startActivity(finalIntent)
-        }
+        finalizeActivity("Dealer won.")
     }
 
     override fun twentyOne() {
         Toast.makeText(this, "BlackJack!", Toast.LENGTH_SHORT).show()
-        val finalIntent = Intent(this, FinalActivity::class.java)
-        finalIntent.putExtra("username", presenter.getUsername())
-        finalIntent.putExtra("outcome","BlackJack!")
-        finalIntent.putExtra("player", presenter.getPlayerSum().toString())
-        finalIntent.putExtra("dealer", presenter.getDealerSum().toString())
-        finalIntent.putExtra("split", "f")
-        Timer("pause", false).schedule(2000) {
-            startActivity(finalIntent)
-        }
+        finalizeActivity("BlackJack!")
     }
 
     override fun tie() {
-        val finalIntent = Intent(this, FinalActivity::class.java)
-        finalIntent.putExtra("username", presenter.getUsername())
-        finalIntent.putExtra("outcome","Tied.")
-        finalIntent.putExtra("player", presenter.getPlayerSum().toString())
-        finalIntent.putExtra("dealer", presenter.getDealerSum().toString())
-        finalIntent.putExtra("split", "f")
-        Timer("pause", false).schedule(2000) {
-            startActivity(finalIntent)
-        }
+        finalizeActivity("Tied.")
     }
 
-    override fun split()
-    {
-        val finalIntent = Intent(this, FinalActivity::class.java)
-        finalIntent.putExtra("split", "t")
-        finalIntent.putExtra("username", presenter.getUsername())
-        finalIntent.putExtra("outcome", presenter.getDealerSum().toString())
-        finalIntent.putExtra("player", presenter.getPlayerSplitSum().toString())
-        finalIntent.putExtra("dealer", presenter.getPlayerSum().toString())
-        Timer("pause", false).schedule(2000) {
-            startActivity(finalIntent)
-        }
+    override fun split() {
+        finalizeActivity(split = "t")
     }
 
     override fun disableButtons() {
@@ -212,6 +164,35 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
         buttonDouble.isClickable = true
         buttonPass.isClickable = true
         buttonSplit.isClickable = true
+    }
+
+    fun finalizeActivity(outcome: String = "", split: String = "f") {
+
+        val finalIntent = Intent(this, FinalActivity::class.java)
+        finalIntent.putExtra("split", split)
+        finalIntent.putExtra("username", presenter.getUsername())
+
+        if (split == "t") {
+            finalIntent.putExtra("outcome", presenter.getDealerSum().toString())
+            finalIntent.putExtra("player", presenter.getPlayerSplitSum().toString())
+            finalIntent.putExtra("dealer", presenter.getPlayerSum().toString())
+        }
+        else {
+            finalIntent.putExtra("outcome", outcome)
+            finalIntent.putExtra("player", presenter.getPlayerSum().toString())
+            finalIntent.putExtra("dealer", presenter.getDealerSum().toString())
+        }
+
+        Timer("pause", false).schedule(2000) {
+            startActivity(finalIntent)
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.run {
+
+        }
+        super.onSaveInstanceState(outState)
     }
 
 }

@@ -256,7 +256,6 @@
         android:layout_marginStart="30dp"
         android:layout_marginTop="350dp"
         android:layout_marginBottom="200dp"
-        android:fontFamily="sans-serif-medium"
         android:shadowColor="#000000"
         android:shadowDx="10"
         android:shadowDy="10"

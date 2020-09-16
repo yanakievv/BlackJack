@@ -1,7 +1,6 @@
 package com.example.blackjack.main
 
-enum class CardSuit(val type: Char)
-{
+enum class CardSuit(val type: Char) {
     CLUBS('\u2663'),
     SPADE('\u2660'),
     DIAMOND('\u2666'),
@@ -11,14 +10,12 @@ enum class CardSuit(val type: Char)
 
 class Card(val value: Int, val suit: CardSuit, val ref: String)
 
-class Deck(val numOfDecks: Int = 0)
-{
+class Deck(val numOfDecks: Int = 1) {
     var cards = mutableListOf<Card>()
 }
 
-class Game
-{
-    var deck: Deck = Deck(8)
+class Game {
+    var deck: Deck = Deck(1)
 
     var playerSum: Int = 0
     var playerSplitSum: Int = 0
