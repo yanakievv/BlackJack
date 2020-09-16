@@ -282,6 +282,11 @@ class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivit
         game.playerSum = game.playerSum - game.playerSplitSum
 
         view?.cleanUpView()
+
+        if (game.playerSum == 21)
+        {
+            view?.split()
+        }
     }
 }
 

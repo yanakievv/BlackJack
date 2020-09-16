@@ -4,8 +4,16 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.room.Room
+import com.example.blackjack.data.User
+import com.example.blackjack.data.UserDAO
+import com.example.blackjack.data.UserDatabase
 import com.example.blackjack.main.MainActivity
+import com.facebook.stetho.Stetho
 import kotlinx.android.synthetic.main.activity_final.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 object Counter
 {
@@ -24,19 +32,46 @@ object Counter
 }
 
 class FinalActivity : AppCompatActivity() {
+    private var db: UserDatabase? = null
+    private var dbDAO : UserDAO? = null
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_final)
+        Stetho.initializeWithDefaults(this) // for looking up the data live while using the app in chrome://inspect on PC's browser
+
+        db= Room.databaseBuilder(this, UserDatabase::class.java, "user_statistics_db").build()
+        dbDAO = db?.userDAO
+
+        //whole activity code will be refactored, this is a temporary solution for testing out the database on top of previous code
 
         Counter.userName = intent.getStringExtra("username") as String
 
         if (savedInstanceState == null) {
+            var userId: Int?
             val outcome = intent.getStringExtra("outcome")
             val playerSum = intent.getStringExtra("player")
             val dealerSum = intent.getStringExtra("dealer")
 
+            CoroutineScope(Dispatchers.IO).launch {
+                if (dbDAO?.checkUser(Counter.userName) == 0) {
+                    dbDAO?.addUser(User(username = Counter.userName))
+                }
+                userId = dbDAO?.getUserId(Counter.userName)
+                if (outcome == "BlackJack!" || outcome == "Winner!")
+                {
+                    dbDAO?.incWin(userId as Int)
+                }
+                else if (outcome != "Tied." && intent.getStringExtra("split") == "f")
+                {
+                    dbDAO?.incLoss(userId as Int)
+                }
+                if (Counter.combo > dbDAO?.getStreak(userId as Int) as Int)
+                {
+                    dbDAO?.setStreak(userId as Int, Counter.combo)
+                }
+            }
             if (outcome == "BlackJack!" || outcome == "Winner!") {
                 if (!Counter.onStreak) {
                     Counter.onStreak = true

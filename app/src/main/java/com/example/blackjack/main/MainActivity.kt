@@ -14,10 +14,11 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 import kotlin.concurrent.schedule
 
+internal lateinit var presenter: Contract.MainActivityPresenter
 
 class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainView {
 
-    internal lateinit var presenter: Contract.MainActivityPresenter
+
     var dealerHand = mutableListOf<Card>()
     var dealerView = mutableListOf<TextView>()
 
@@ -40,10 +41,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
 
         setPresenter(MainActivityPresenter(this))
 
-        if (savedInstanceState == null) {
-            presenter.init()
-        }
 
+        presenter.init()
 
     }
 
@@ -124,7 +123,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
     }
 
     override fun setPresenter(presenter: Contract.MainActivityPresenter) {
-        this.presenter = presenter
+        com.example.blackjack.main.presenter = presenter
     }
 
     override fun bust() {
@@ -188,11 +187,5 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.run {
-
-        }
-        super.onSaveInstanceState(outState)
-    }
 
 }
