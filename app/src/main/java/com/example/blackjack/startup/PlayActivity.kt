@@ -1,9 +1,10 @@
-package com.example.blackjack
+package com.example.blackjack.startup
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.blackjack.R
 import com.example.blackjack.main.MainActivity
 import kotlinx.android.synthetic.main.activity_play.*
 

@@ -11,8 +11,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup">
-        <activity android:name=".FinalActivity" />
-        <activity android:name=".PlayActivity">
+        <activity android:name=".final.FinalActivity" />
+        <activity android:name=".startup.PlayActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,7 +22,7 @@
         <activity android:name=".main.MainActivity"
             android:configChanges="orientation|screenSize"/>
         <activity
-            android:name=".SplashActivity"
+            android:name=".startup.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

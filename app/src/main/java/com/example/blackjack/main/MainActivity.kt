@@ -8,7 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.blackjack.Contract
-import com.example.blackjack.FinalActivity
+import com.example.blackjack.final.FinalActivity
 import com.example.blackjack.R
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*

@@ -1,7 +1,5 @@
 package com.example.blackjack
 
-import com.example.blackjack.main.BasePresenter
-import com.example.blackjack.main.BaseView
 import com.example.blackjack.main.Card
 
 interface Contract {

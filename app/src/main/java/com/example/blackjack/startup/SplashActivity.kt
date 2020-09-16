@@ -1,4 +1,4 @@
-package com.example.blackjack
+package com.example.blackjack.startup
 
 import android.content.Intent
 import android.os.Bundle

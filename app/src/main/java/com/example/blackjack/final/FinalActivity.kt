@@ -1,14 +1,16 @@
-package com.example.blackjack
+package com.example.blackjack.final
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
+import com.example.blackjack.R
 import com.example.blackjack.data.User
 import com.example.blackjack.data.UserDAO
 import com.example.blackjack.data.UserDatabase
 import com.example.blackjack.main.MainActivity
+import com.example.blackjack.startup.PlayActivity
 import com.facebook.stetho.Stetho
 import kotlinx.android.synthetic.main.activity_final.*
 import kotlinx.coroutines.CoroutineScope
