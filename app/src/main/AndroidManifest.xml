@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.blackjack">
-    <!--Third line suppresses fullBackupContent-->
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -11,7 +11,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup">
-        <activity android:name=".final.FinalActivity" />
+        <activity
+            android:name=".statistics.StatisticsActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".final.FinalActivity"
+            android:configChanges="orientation|screenSize" />
         <activity android:name=".startup.PlayActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,8 +24,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".main.MainActivity"
-            android:configChanges="orientation|screenSize"/>
+        <activity
+            android:name=".main.MainActivity"
+            android:configChanges="orientation|screenSize" />
         <activity
             android:name=".startup.SplashActivity"
             android:theme="@style/SplashTheme">

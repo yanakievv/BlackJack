@@ -9,4 +9,6 @@
     <string name="restart">Restart</string>
     <string name="background">Background</string>
     <string name="chipButton">Chip Button</string>
+    <string name="statistics">Statistics</string>
+    <string name="back">Back</string>
 </resources>

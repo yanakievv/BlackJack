@@ -18,6 +18,18 @@ data class User(
     @ColumnInfo(name = "losses")
     val losses: Int = 0,
 
+    @ColumnInfo(name = "split_hands_won")
+    val splitHandsWon: Int = 0,
+
+    @ColumnInfo(name = "split_hands_lost")
+    val splitHandsLost: Int = 0,
+
+    @ColumnInfo(name = "doubles_won")
+    val doublesWon: Int = 0,
+
+    @ColumnInfo(name = "current_streak")
+    val currentStreak: Int = 0,
+
     @ColumnInfo(name = "best_streak")
     val bestStreak: Int = 0
 )

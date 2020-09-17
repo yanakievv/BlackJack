@@ -31,6 +31,7 @@ class Game {
 
     var hasSplit: Boolean = false
     var hasHadSplit: Boolean = false
+    var hasDoubled: Boolean = false
 
     var userName: String = "Player"
 

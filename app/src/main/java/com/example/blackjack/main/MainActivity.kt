@@ -7,9 +7,9 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.blackjack.Contract
-import com.example.blackjack.final.FinalActivity
 import com.example.blackjack.R
+import com.example.blackjack.contract.Contract
+import com.example.blackjack.final.FinalActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 import kotlin.concurrent.schedule
@@ -19,13 +19,13 @@ internal lateinit var presenter: Contract.MainActivityPresenter
 class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainView {
 
 
-    var dealerHand = mutableListOf<Card>()
-    var dealerView = mutableListOf<TextView>()
+    private var dealerHand = mutableListOf<Card>()
+    private var dealerView = mutableListOf<TextView>()
 
-    var playerHand = mutableListOf<Card>()
-    var playerSplitHand = mutableListOf<Card>()
-    var playerView = mutableListOf<TextView>()
-    var playerSplitView = mutableListOf<TextView>()
+    private var playerHand = mutableListOf<Card>()
+    private var playerSplitHand = mutableListOf<Card>()
+    private var playerView = mutableListOf<TextView>()
+    private var playerSplitView = mutableListOf<TextView>()
 
 
 
@@ -131,8 +131,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
         finalizeActivity("Bust!")
     }
 
-    override fun win() {
-        finalizeActivity("Winner!")
+    override fun win(doubled: String) {
+        finalizeActivity("Winner!", double = doubled)
     }
 
     override fun loss() {
@@ -165,9 +165,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
         buttonSplit.isClickable = true
     }
 
-    fun finalizeActivity(outcome: String = "", split: String = "f") {
+    fun finalizeActivity(outcome: String = "", split: String = "f", double: String = "f") {
 
         val finalIntent = Intent(this, FinalActivity::class.java)
+        finalIntent.putExtra("double", double)
         finalIntent.putExtra("split", split)
         finalIntent.putExtra("username", presenter.getUsername())
 

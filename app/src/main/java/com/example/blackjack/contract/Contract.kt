@@ -1,5 +1,7 @@
-package com.example.blackjack
+package com.example.blackjack.contract
 
+import android.content.Context
+import com.example.blackjack.final.InputFromMain
 import com.example.blackjack.main.Card
 
 interface Contract {
@@ -33,7 +35,7 @@ interface Contract {
         fun cleanUpView()
 
         fun bust()
-        fun win()
+        fun win(doubled: String)
         fun loss()
         fun tie()
         fun twentyOne()
@@ -41,6 +43,18 @@ interface Contract {
 
         fun enableButtons()
         fun disableButtons()
+
+    }
+
+    interface FinalActivityPresenter: BasePresenter {
+
+        fun connect(context: Context)
+        suspend fun process(info: InputFromMain)
+
+
+    }
+
+    interface FinalView: BaseView<FinalActivityPresenter> {
 
     }
 }

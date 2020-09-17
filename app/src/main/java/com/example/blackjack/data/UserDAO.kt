@@ -16,8 +16,17 @@ interface UserDAO {
     @Query("SELECT userId FROM user_data WHERE username = :userName")
     suspend fun getUserId(userName: String) : Int
 
-    @Query("SELECT best_streak FROM user_data WHERE userId = :userId")
+    @Query("SELECT current_streak FROM user_data WHERE userId = :userId")
     suspend fun getStreak(userId: Int) : Int
+
+    @Query("SELECT best_streak FROM user_data WHERE userId = :userId")
+    suspend fun getBestStreak(userId: Int) : Int
+
+    @Query("SELECT wins FROM user_data WHERE userId = :userId")
+    suspend fun getWins(userId: Int) : Int
+
+    @Query("SELECT losses FROM user_data WHERE userId = :userId")
+    suspend fun getLosses(userId: Int) : Int
 
     @Query("UPDATE user_data SET wins = wins + 1 WHERE userId = :userId")
     suspend fun incWin(userId : Int)
@@ -25,8 +34,23 @@ interface UserDAO {
     @Query("UPDATE user_data SET losses = losses + 1 WHERE userId = :userId")
     suspend fun incLoss(userId : Int)
 
-    @Query("UPDATE user_data SET best_streak = :newStreak WHERE userId = :userId")
+    @Query("UPDATE user_data SET current_streak = :newStreak WHERE userId = :userId")
     suspend fun setStreak(userId: Int, newStreak: Int)
+
+    @Query("UPDATE user_data SET best_streak = :newStreak WHERE userId = :userId")
+    suspend fun setBestStreak(userId: Int, newStreak: Int)
+
+    @Query("UPDATE user_data SET split_hands_won = split_hands_won + 1 WHERE userId = :userId")
+    suspend fun incSplitWin(userId : Int)
+
+    @Query("UPDATE user_data SET split_hands_lost = split_hands_lost + 1 WHERE userId = :userId")
+    suspend fun incSplitLoss(userId : Int)
+
+    @Query("UPDATE user_data SET doubles_won = doubles_won + 1 WHERE userId = :userId")
+    suspend fun incDoubleWon(userId : Int)
+
+    @Query("DELETE FROM user_data WHERE userId = :userId")
+    suspend fun removeEntry(userId: Int)
 }
 
 

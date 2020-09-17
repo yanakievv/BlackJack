@@ -84,58 +84,23 @@
         app:layout_constraintTop_toBottomOf="@+id/playerScore"
         app:layout_constraintVertical_bias="0.0" />
 
-    <TextView
-        android:id="@+id/playerCount"
-        android:layout_width="wrap_content"
-        android:layout_height="16dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginBottom="150dp"
-        android:shadowColor="#000000"
-        android:shadowDx="10"
-        android:shadowDy="10"
-        android:shadowRadius="0"
-        android:textColor="#FFFFFF"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/restartButton" />
-
-    <TextView
-        android:id="@+id/dealerCount"
-        android:layout_width="wrap_content"
-        android:layout_height="16dp"
-        android:layout_marginStart="25dp"
-        android:layout_marginBottom="100dp"
-        android:shadowColor="#000000"
-        android:shadowDx="10"
-        android:shadowDy="10"
-        android:shadowRadius="0"
-        android:textColor="#FFFFFF"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/restartButton" />
-
-    <TextView
-        android:id="@+id/streakCounter"
-        android:layout_width="wrap_content"
-        android:layout_height="16dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginBottom="75dp"
-        android:shadowColor="#000000"
-        android:shadowDx="10"
-        android:shadowDy="10"
-        android:shadowRadius="0"
-        android:textColor="#FFFFFF"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/restartButton" />
-
     <Button
         android:id="@+id/changeUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="25dp"
+        android:layout_marginEnd="15dp"
         android:layout_marginBottom="15dp"
         android:text="@string/change_user"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/statistics"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="15dp"
+        android:text="@string/statistics"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

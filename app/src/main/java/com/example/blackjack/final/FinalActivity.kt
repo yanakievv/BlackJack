@@ -4,38 +4,25 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.room.Room
 import com.example.blackjack.R
-import com.example.blackjack.data.User
-import com.example.blackjack.data.UserDAO
-import com.example.blackjack.data.UserDatabase
+import com.example.blackjack.contract.Contract
 import com.example.blackjack.main.MainActivity
 import com.example.blackjack.startup.PlayActivity
+import com.example.blackjack.statistics.StatisticsActivity
 import com.facebook.stetho.Stetho
 import kotlinx.android.synthetic.main.activity_final.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object Counter
-{
-    var playerCnt: Int = 0
-    var dealerCnt: Int = 0
-    var combo: Int = 0
-    var onStreak: Boolean = false
-    var userName: String = "Player"
+class InputFromMain(var split: String?, var username: String?, var outcome: String?, var player: String?, var dealer: String?, var double: String?)
 
-    fun reset() {
-        playerCnt = 0
-        dealerCnt = 0
-        combo = 0
-        onStreak = false
-    }
-}
 
-class FinalActivity : AppCompatActivity() {
-    private var db: UserDatabase? = null
-    private var dbDAO : UserDAO? = null
+internal lateinit var presenter: Contract.FinalActivityPresenter
+
+class FinalActivity : AppCompatActivity(), Contract.FinalView {
+
+    private var input: InputFromMain? = null
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,116 +30,90 @@ class FinalActivity : AppCompatActivity() {
         setContentView(R.layout.activity_final)
         Stetho.initializeWithDefaults(this) // for looking up the data live while using the app in chrome://inspect on PC's browser
 
-        db= Room.databaseBuilder(this, UserDatabase::class.java, "user_statistics_db").build()
-        dbDAO = db?.userDAO
-
-        //whole activity code will be refactored, this is a temporary solution for testing out the database on top of previous code
-
-        Counter.userName = intent.getStringExtra("username") as String
-
         if (savedInstanceState == null) {
-            var userId: Int?
-            val outcome = intent.getStringExtra("outcome")
-            val playerSum = intent.getStringExtra("player")
-            val dealerSum = intent.getStringExtra("dealer")
+
+            setPresenter(FinalActivityPresenter(this))
+            presenter.connect(this)
+
+            input = InputFromMain(
+                intent.getStringExtra("split"),
+                intent.getStringExtra("username"),
+                intent.getStringExtra("outcome"),
+                intent.getStringExtra("player"),
+                intent.getStringExtra("dealer"),
+                intent.getStringExtra("double")
+            )
 
             CoroutineScope(Dispatchers.IO).launch {
-                if (dbDAO?.checkUser(Counter.userName) == 0) {
-                    dbDAO?.addUser(User(username = Counter.userName))
-                }
-                userId = dbDAO?.getUserId(Counter.userName)
-                if (outcome == "BlackJack!" || outcome == "Winner!")
-                {
-                    dbDAO?.incWin(userId as Int)
-                }
-                else if (outcome != "Tied." && intent.getStringExtra("split") == "f")
-                {
-                    dbDAO?.incLoss(userId as Int)
-                }
-                if (Counter.combo > dbDAO?.getStreak(userId as Int) as Int)
-                {
-                    dbDAO?.setStreak(userId as Int, Counter.combo)
-                }
-            }
-            if (outcome == "BlackJack!" || outcome == "Winner!") {
-                if (!Counter.onStreak) {
-                    Counter.onStreak = true
-                }
-                Counter.combo++
-                Counter.playerCnt++
-            }
-            else if (outcome != "Tied." && intent.getStringExtra("split") == "f") {
-                Counter.dealerCnt++
-                Counter.onStreak = false
-                Counter.combo = 0
+                presenter.process(input as InputFromMain)
             }
 
-            if (intent.getStringExtra("split") == "f") {
-                finalText.text = outcome
-                if (outcome != "BlackJack!" && outcome != "Bust!") {
-                    playerScore.text = "${Counter.userName}: ${playerSum}"
-                    dealerScore.text = "Dealer: ${dealerSum}"
-                }
-                else if (outcome == "Bust!") {
-                    playerScore.text = "${Counter.userName}: ${playerSum}"
+            if (input?.split == "f") {
+                when (input?.outcome) {
+                    "Bust!" -> bust()
+                    "BlackJack!" -> twentyOne()
+                    else -> regular()
                 }
             }
-            else {
-                finalText.text = "Dealer: ${outcome}"
-                playerScore.text = "${Counter.userName} hand #2: ${dealerSum}"
-                dealerScore.text = "${Counter.userName} hand #1: ${playerSum}"
-                if ((Integer.valueOf(outcome.toString()) > Integer.valueOf(playerSum.toString()) && (Integer.valueOf(outcome.toString()) <= 21)) || (Integer.valueOf(playerSum.toString()) > 21))
-                {
-                    Counter.dealerCnt++
-                    Counter.onStreak = false
-                    Counter.combo = 0
-                }
-                else if ((Integer.valueOf(outcome.toString()) < Integer.valueOf(playerSum.toString()) && (Integer.valueOf(playerSum.toString()) <= 21)) || (Integer.valueOf(outcome.toString()) > 21)) {
-                    if (!Counter.onStreak) {
-                        Counter.onStreak = true
-                    }
-                    Counter.combo++
-                    Counter.playerCnt++
-                }
-                if ((Integer.valueOf(outcome.toString()) > Integer.valueOf(dealerSum.toString()) && (Integer.valueOf(outcome.toString()) <= 21)) || (Integer.valueOf(dealerSum.toString()) > 21)) {
-                    Counter.dealerCnt++
-                    Counter.onStreak = false
-                    Counter.combo = 0
-                }
-                else if ((Integer.valueOf(outcome.toString()) < Integer.valueOf(dealerSum.toString()) && (Integer.valueOf(dealerSum.toString()) <= 21)) || (Integer.valueOf(outcome.toString()) > 21)) {
-                    if (!Counter.onStreak) {
-                        Counter.onStreak = true
-                    }
-                    Counter.combo++
-                    Counter.playerCnt++
-                }
-            }
-
-            playerCount.text = "${Counter.userName} won: ${Counter.playerCnt}"
-            dealerCount.text = "Dealer won: ${Counter.dealerCnt}"
-            streakCounter.text = "Current Streak: ${Counter.combo}"
+            else split()
         }
 
+        // Removed views for wins, losses and streaks because of synchronization problems.
+        // Because the "presenter.process()" function is suspendable and runs in a new coroutine the views get old or inconsistent information so all of that will be moved into a separate activity(StatisticsActivity).
+        // Could have used "runBlocking" instead or declared the functions without the "suspend" keyword, but that'll block the current thread, slowing down the UI when querying a "fatter" database.
 
         restartButton.setOnClickListener{
             val restartGame = Intent(applicationContext, MainActivity::class.java)
-            restartGame.putExtra("username", Counter.userName)
+            restartGame.putExtra("username", input?.username)
             startActivity(restartGame)
         }
 
         changeUser.setOnClickListener{
-            Counter.reset()
             val changePlayer = Intent(applicationContext, PlayActivity::class.java)
             startActivity(changePlayer)
+        }
+        statistics.setOnClickListener{
+            val statistics = Intent(applicationContext, StatisticsActivity::class.java)
+            startActivity(statistics)
         }
 
     }
 
+    @SuppressLint("SetTextI18n")
+    fun regular() {
+        finalText.text = input?.outcome
+        playerScore.text = "${input?.username}: ${input?.player}"
+        dealerScore.text = "Dealer: ${input?.dealer}"
+
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun bust() {
+        finalText.text = "Bust!"
+        playerScore.text = "${input?.username}: ${input?.player}"
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun twentyOne() {
+        finalText.text = "BlackJack!"
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun split() {
+        finalText.text = "Dealer: ${input?.outcome}"
+        playerScore.text = "${input?.username} hand #2: ${input?.dealer}"
+        dealerScore.text = "${input?.username} hand #1: ${input?.player}"
+    }
+
+    override fun setPresenter(presenter: Contract.FinalActivityPresenter) {
+        com.example.blackjack.final.presenter = presenter
+    }
     override fun onSaveInstanceState(outState: Bundle) {
         outState.run {
             putString("final", finalText.text.toString())
-            putString("playersc", playerScore.text.toString())
-            putString("dealersc", dealerScore.text.toString())
+            putString("player", playerScore.text.toString())
+            putString("dealer", dealerScore.text.toString())
+            putString("username", input?.username)
         }
         super.onSaveInstanceState(outState)
     }
@@ -162,12 +123,9 @@ class FinalActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
 
         finalText.text = savedInstanceState.getString("final")
-        playerScore.text = savedInstanceState.getString("playersc")
-        dealerScore.text = savedInstanceState.getString("dealersc")
-
-        playerCount.text = "${Counter.userName} won: ${Counter.playerCnt}"
-        dealerCount.text = "Dealer won: ${Counter.dealerCnt}"
-        streakCounter.text = "Current Streak: ${Counter.combo}"
+        playerScore.text = savedInstanceState.getString("player")
+        dealerScore.text = savedInstanceState.getString("dealer")
+        input?.username = savedInstanceState.getString("username")
     }
 }
 

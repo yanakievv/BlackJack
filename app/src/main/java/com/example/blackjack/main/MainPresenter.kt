@@ -1,6 +1,6 @@
 package com.example.blackjack.main
 
-import com.example.blackjack.Contract
+import com.example.blackjack.contract.Contract
 
 class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivityPresenter {
     var game = Game()
@@ -214,7 +214,7 @@ class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivit
             }
             else {
                 if ((game.dealerSum > 21 || game.playerSum > game.dealerSum) && game.playerSum <= 21) {
-                    view?.win()
+                    view?.win(if (game.hasDoubled) "t" else "f")
                 }
                 else if (game.dealerSum > game.playerSum || game.playerSum > 21) {
                     view?.loss()
@@ -261,6 +261,7 @@ class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivit
 
     override fun doubleAction() {
         if (game.playerArr.size == 2 || (game.hasHadSplit && game.playerSplitArr.size == 2)) {
+            game.hasDoubled = true
             hitAction()
             dealerTurn()
         }
