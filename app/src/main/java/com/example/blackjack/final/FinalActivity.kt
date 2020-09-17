@@ -59,7 +59,7 @@ class FinalActivity : AppCompatActivity(), Contract.FinalView {
         }
 
         // Removed views for wins, losses and streaks because of synchronization problems.
-        // Because the "presenter.process()" function is suspendable and runs in a new coroutine the views get old or inconsistent information so all of that will be moved into a separate activity(StatisticsActivity).
+        // Because the "presenter.process()" function is suspendable(as well as all database access functions) and runs in a new coroutine the views get old or inconsistent information so all of that will be moved into a separate activity(StatisticsActivity).
         // Could have used "runBlocking" instead or declared the functions without the "suspend" keyword, but that'll block the current thread, slowing down the UI when querying a "fatter" database.
 
         restartButton.setOnClickListener{
