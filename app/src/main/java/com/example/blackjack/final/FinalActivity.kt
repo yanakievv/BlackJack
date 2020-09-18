@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 class InputFromMain(var split: String?, var username: String?, var outcome: String?, var player: String?, var dealer: String?, var double: String?)
 
 
+
 internal lateinit var presenter: Contract.FinalActivityPresenter
 
 class FinalActivity : AppCompatActivity(), Contract.FinalView {
@@ -44,6 +45,7 @@ class FinalActivity : AppCompatActivity(), Contract.FinalView {
                 intent.getStringExtra("double")
             )
 
+
             CoroutineScope(Dispatchers.IO).launch {
                 presenter.process(input as InputFromMain)
             }
@@ -59,7 +61,7 @@ class FinalActivity : AppCompatActivity(), Contract.FinalView {
         }
 
         // Removed views for wins, losses and streaks because of synchronization problems.
-        // Because the "presenter.process()" function is suspendable and runs in a new coroutine the views get old or inconsistent information so all of that will be moved into a separate activity(StatisticsActivity).
+        // Because the "presenter.process()" function is suspendable(as well as all database access functions) and runs in a new coroutine the views get old or inconsistent information so all of that will be moved into a separate activity(StatisticsActivity).
         // Could have used "runBlocking" instead or declared the functions without the "suspend" keyword, but that'll block the current thread, slowing down the UI when querying a "fatter" database.
 
         restartButton.setOnClickListener{
@@ -68,12 +70,13 @@ class FinalActivity : AppCompatActivity(), Contract.FinalView {
             startActivity(restartGame)
         }
 
-        changeUser.setOnClickListener{
+        compareUser.setOnClickListener{
             val changePlayer = Intent(applicationContext, PlayActivity::class.java)
             startActivity(changePlayer)
         }
         statistics.setOnClickListener{
             val statistics = Intent(applicationContext, StatisticsActivity::class.java)
+            statistics.putExtra("username", input?.username)
             startActivity(statistics)
         }
 

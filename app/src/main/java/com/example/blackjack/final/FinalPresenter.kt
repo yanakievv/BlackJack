@@ -52,6 +52,7 @@ class FinalActivityPresenter(var view: Contract.FinalView?) : Contract.FinalActi
 
     override suspend fun process(info: InputFromMain) {
         val uID: Int = getUID(info.username as String)
+        val overallID: Int = getUID("Overall")
 
         bestCombo = dbDAO?.getBestStreak(uID) as Int
         combo = dbDAO?.getStreak(uID) as Int
@@ -59,14 +60,17 @@ class FinalActivityPresenter(var view: Contract.FinalView?) : Contract.FinalActi
         if (info.split == "f") {
             if (info.outcome == "Bust!" || info.outcome == "Dealer won.") {
                 dbDAO?.incLoss(uID)
+                dbDAO?.incLoss(overallID)
                 alterStreak(false, uID)
             }
             else if (info.outcome != "Tied.") {
                 dbDAO?.incWin(uID)
+                dbDAO?.incWin(overallID)
                 alterStreak(true, uID)
                 if (info.double == "t")
                 {
                     dbDAO?.incDoubleWon(uID)
+                    dbDAO?.incDoubleWon(overallID)
                 }
             }
         }
@@ -75,21 +79,25 @@ class FinalActivityPresenter(var view: Contract.FinalView?) : Contract.FinalActi
             if (compareHands(Integer.valueOf(info.player as String), Integer.valueOf(info.outcome as String)))
             {
                 dbDAO?.incSplitWin(uID)
+                dbDAO?.incSplitWin(overallID)
                 alterStreak(true, uID)
             }
-            else if (Integer.valueOf(info.player as String) != Integer.valueOf(info.outcome as String))
+            else if (Integer.valueOf(info.player as String) != Integer.valueOf(info.outcome as String) || Integer.valueOf(info.player as String) > 21)
             {
                 dbDAO?.incSplitLoss(uID)
+                dbDAO?.incSplitLoss(overallID)
                 alterStreak(false, uID)
             }
             if (compareHands(Integer.valueOf(info.dealer as String), Integer.valueOf(info.outcome as String)))
             {
                 dbDAO?.incSplitWin(uID)
+                dbDAO?.incSplitWin(overallID)
                 alterStreak(true, uID)
             }
-            else if (Integer.valueOf(info.dealer as String) != Integer.valueOf(info.outcome as String))
+            else if (Integer.valueOf(info.dealer as String) != Integer.valueOf(info.outcome as String) || Integer.valueOf(info.dealer as String) > 21)
             {
                 dbDAO?.incSplitLoss(uID)
+                dbDAO?.incSplitLoss(overallID)
                 alterStreak(false, uID)
             }
         }

@@ -16,6 +16,9 @@ interface UserDAO {
     @Query("SELECT userId FROM user_data WHERE username = :userName")
     suspend fun getUserId(userName: String) : Int
 
+    @Query("SELECT username FROM user_data WHERE userId = :userId")
+    suspend fun getUsername(userId: Int) : String
+
     @Query("SELECT current_streak FROM user_data WHERE userId = :userId")
     suspend fun getStreak(userId: Int) : Int
 
@@ -27,6 +30,15 @@ interface UserDAO {
 
     @Query("SELECT losses FROM user_data WHERE userId = :userId")
     suspend fun getLosses(userId: Int) : Int
+
+    @Query("SELECT split_hands_won FROM user_data WHERE userId = :userId")
+    suspend fun getSplitWins(userId: Int) : Int
+
+    @Query("SELECT split_hands_lost FROM user_data WHERE userId = :userId")
+    suspend fun getSplitLosses(userId: Int) : Int
+
+    @Query("SELECT doubles_won FROM user_data WHERE userId = :userId")
+    suspend fun getDoublesWon(userId: Int) : Int
 
     @Query("UPDATE user_data SET wins = wins + 1 WHERE userId = :userId")
     suspend fun incWin(userId : Int)
@@ -51,6 +63,9 @@ interface UserDAO {
 
     @Query("DELETE FROM user_data WHERE userId = :userId")
     suspend fun removeEntry(userId: Int)
+
+    @Query("DELETE FROM user_data")
+    suspend fun removeAll()
 }
 
 
