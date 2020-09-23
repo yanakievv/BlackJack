@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.blackjack.R
 import com.example.blackjack.contract.Contract
 import com.example.blackjack.final.FinalActivity
+import com.facebook.AccessToken
+import com.facebook.Profile
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 import kotlin.concurrent.schedule
@@ -75,9 +77,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
 
     override fun init() {
 
-        presenter.setUsername(intent.getStringExtra("username").toString())
-        if (presenter.getUsername() == "")
-        {
+        val accessToken: AccessToken? = AccessToken.getCurrentAccessToken()
+        if (accessToken != null && !accessToken.isExpired) {
+            presenter.setUsername(Profile.getCurrentProfile().name)
+        }
+        else {
             presenter.setUsername("Player")
         }
 

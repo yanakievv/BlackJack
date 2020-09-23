@@ -28,14 +28,14 @@ class FinalActivityPresenter(var view: Contract.FinalView?) : Contract.FinalActi
 
     }
 
-    private fun getUID(username: String): Int {
+    private fun getUID(fbID: String, username: String): Int {
         var uID: Int
         runBlocking {
-            if (dbDAO?.checkUser(username) == 0)
+            if (dbDAO?.checkUser(fbID) == 0)
             {
-                dbDAO?.addUser(User(username = username))
+                dbDAO?.addUser(User(fbID = fbID, username = username))
             }
-            uID = dbDAO?.getUserId(username) as Int
+            uID = dbDAO?.getUserId(fbID) as Int
         }
 
         return uID
@@ -51,8 +51,8 @@ class FinalActivityPresenter(var view: Contract.FinalView?) : Contract.FinalActi
     }
 
     override suspend fun process(info: InputFromMain) {
-        val uID: Int = getUID(info.username as String)
-        val overallID: Int = getUID("Overall")
+        val uID: Int = getUID(info.fbID as String, info.username as String)
+        val overallID: Int = getUID("Overall","Overall")
 
         bestCombo = dbDAO?.getBestStreak(uID) as Int
         combo = dbDAO?.getStreak(uID) as Int

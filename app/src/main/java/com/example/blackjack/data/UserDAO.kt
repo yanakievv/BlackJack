@@ -10,11 +10,11 @@ interface UserDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addUser(user: User)
 
-    @Query("SELECT EXISTS(SELECT 1 FROM user_data WHERE username = :userName LIMIT 1)")
-    suspend fun checkUser(userName: String) : Int
+    @Query("SELECT EXISTS(SELECT 1 FROM user_data WHERE fb_ID = :fbID LIMIT 1)")
+    suspend fun checkUser(fbID: String) : Int
 
-    @Query("SELECT userId FROM user_data WHERE username = :userName")
-    suspend fun getUserId(userName: String) : Int
+    @Query("SELECT userId FROM user_data WHERE fb_ID = :fbID")
+    suspend fun getUserId(fbID: String) : Int
 
     @Query("SELECT username FROM user_data WHERE userId = :userId")
     suspend fun getUsername(userId: Int) : String
@@ -39,6 +39,9 @@ interface UserDAO {
 
     @Query("SELECT doubles_won FROM user_data WHERE userId = :userId")
     suspend fun getDoublesWon(userId: Int) : Int
+
+    @Query("SELECT * FROM user_data WHERE username = :username")
+    suspend fun getAllUsername(username: String) : Array<User>
 
     @Query("UPDATE user_data SET wins = wins + 1 WHERE userId = :userId")
     suspend fun incWin(userId : Int)

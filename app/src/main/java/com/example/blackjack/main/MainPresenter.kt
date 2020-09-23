@@ -249,6 +249,10 @@ class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivit
         game.playerArr.add(game.it.next())
         game.playerSplitArr.add(game.it.next())
 
+        if (game.playerArr[1].value == 11) {
+            game.playerAce = true
+        }
+
         game.playerSum += game.playerArr[1].value
         game.playerSplitSum += game.playerSplitArr[1].value
 
@@ -257,6 +261,14 @@ class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivit
         }
 
         view?.refreshView()
+
+        if (game.playerArr[0].value == 11)
+        {
+            hitAction()
+            swapHands()
+            hitAction()
+        }
+
     }
 
     override fun doubleAction() {
@@ -281,6 +293,10 @@ class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivit
         game.playerSum = game.playerSum + game.playerSplitSum
         game.playerSplitSum = game.playerSum - game.playerSplitSum
         game.playerSum = game.playerSum - game.playerSplitSum
+
+        if (game.playerArr[1].value == 11) {
+            game.playerAce = true
+        }
 
         view?.cleanUpView()
 

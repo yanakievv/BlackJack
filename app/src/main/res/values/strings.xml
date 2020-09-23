@@ -6,6 +6,7 @@
     <string name="Stand">Stand</string>
     <string name="compare_user">Compare Stats</string>
     <string name="enter_username">Enter Username</string>
+    <string name="enter_password">Enter Password</string>
     <string name="restart">Restart</string>
     <string name="background">Background</string>
     <string name="chipButton">Chip Button</string>
@@ -13,4 +14,9 @@
     <string name="back">Back</string>
     <string name="overall">Overall Stats</string>
     <string name="change_user">Change User</string>
+    <string name="facebook_app_id">384120415940525</string>
+    <string name="facebook_application_id">384120415940525</string>
+    <string name="fb_login_protocol_scheme">fb384120415940525</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
 </resources>

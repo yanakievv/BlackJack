@@ -3,12 +3,13 @@ package com.example.blackjack.statistics
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.blackjack.R
 import com.example.blackjack.data.UserDAO
 import com.example.blackjack.data.UserDatabase
-import kotlinx.android.synthetic.main.activity_final.compareUser
+import com.facebook.Profile
 import kotlinx.android.synthetic.main.activity_statistics.*
 import kotlinx.coroutines.runBlocking
 
@@ -23,10 +24,10 @@ class User {
     var currentStreak: Int = 0
     var bestStreak: Int = 0
 
-    fun init(dbDAO: UserDAO, userName: String) {
+    fun init(dbDAO: UserDAO, fbID: String) {
         runBlocking {
-            if (dbDAO.checkUser(userName) == 1) {
-                uID = dbDAO.getUserId(userName)
+            if (dbDAO.checkUser(fbID) == 1) {
+                uID = dbDAO.getUserId(fbID)
                 username = dbDAO.getUsername(uID)
                 wins = dbDAO.getWins(uID)
                 losses = dbDAO.getLosses(uID)
@@ -49,11 +50,14 @@ class StatisticsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_statistics)
 
+        nextRecord.visibility = View.GONE
+        previousRecord.visibility = View.GONE
+
         val db = UserDatabase.getInstance(this)
         val dbDAO = db.userDAO
-        val username = intent.getStringExtra("username")
+        val fbID = Profile.getCurrentProfile().id
         val user = User()
-        user.init(dbDAO, username as String)
+        user.init(dbDAO, fbID as String)
         showMainData(user)
 
 
@@ -62,13 +66,23 @@ class StatisticsActivity : AppCompatActivity() {
         }
 
         compareUser.setOnClickListener{
-            val secondUser = User()
-            secondUser.username = secondUsername.text.toString().capitalizeWords()
-            secondUser.init(dbDAO, secondUser.username)
-            showSecondaryData(secondUser)
+            nextRecord.visibility = View.VISIBLE
+            previousRecord.visibility = View.VISIBLE
+            // TODO implement searching by first name with two arrow buttons to go through the records
+            // TODO find out how to show the FB profile picture on screen for better user differentiation(might as well use the last name, but its cooler with the picture)
+        }
+
+        nextRecord.setOnClickListener{
+
+        }
+
+        previousRecord.setOnClickListener{
+
         }
 
         overallStats.setOnClickListener{
+            nextRecord.visibility = View.GONE
+            previousRecord.visibility = View.GONE
             val overall = User()
             overall.init(dbDAO, "Overall")
             showSecondaryData(overall)

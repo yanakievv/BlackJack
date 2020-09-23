@@ -21,22 +21,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/poker_table_background_green_color_47243_1068" />
 
-    <TextView
-        android:id="@+id/greet"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginBottom="50dp"
-        android:shadowColor="#000000"
-        android:shadowDx="10"
-        android:shadowDy="10"
-        android:shadowRadius="10"
-        android:textColor="#FFFFFF"
-        android:textSize="36sp"
-        app:layout_constraintBottom_toTopOf="@+id/startButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <ImageButton
         android:id="@+id/startButton"
         android:layout_width="wrap_content"
@@ -50,8 +34,9 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/output_onlinepngtools" />
 
+
     <com.facebook.login.widget.LoginButton
-        android:id="@+id/logoutButton"
+        android:id="@+id/loginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -59,6 +44,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/startButton" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

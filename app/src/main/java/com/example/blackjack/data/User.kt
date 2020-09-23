@@ -9,6 +9,9 @@ data class User(
     @PrimaryKey(autoGenerate = true)
     val userId: Int = 0,
 
+    @ColumnInfo(name = "fb_ID")
+    val fbID: String,
+
     @ColumnInfo(name = "username")
     val username: String,
 

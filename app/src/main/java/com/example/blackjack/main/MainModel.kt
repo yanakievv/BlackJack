@@ -34,6 +34,7 @@ class Game {
     var hasDoubled: Boolean = false
 
     var userName: String = "Player"
+    //var profileID:
 
     var dealerHadTurn: Boolean = false
 }

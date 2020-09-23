@@ -41,7 +41,7 @@
         android:shadowColor="#000000"
         android:shadowDx="10"
         android:shadowDy="10"
-        android:shadowRadius="0"
+        android:shadowRadius="10"
         android:textColor="#FFFFFF"
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -57,7 +57,7 @@
         android:shadowColor="#000000"
         android:shadowDx="10"
         android:shadowDy="10"
-        android:shadowRadius="0"
+        android:shadowRadius="10"
         android:textColor="#FFFFFF"
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -74,7 +74,7 @@
         android:shadowColor="#000000"
         android:shadowDx="10"
         android:shadowDy="10"
-        android:shadowRadius="0"
+        android:shadowRadius="10"
         android:textColor="#FFFFFF"
         android:textSize="36sp"
         app:layout_constraintBottom_toTopOf="@+id/restartButton"
@@ -85,7 +85,7 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <Button
-        android:id="@+id/compareUser"
+        android:id="@+id/changeUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="15dp"
