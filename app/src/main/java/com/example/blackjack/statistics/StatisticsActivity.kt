@@ -41,7 +41,7 @@ class StatisticsActivity : AppCompatActivity() {
         compareUser.setOnClickListener{
             var index = 0
             var users: Array<User>
-            runBlocking { users = dbDAO.getAllUsername(fbID, secondUsername.text.toString()) }
+            runBlocking { users = dbDAO.getAllUsername(fbID, secondUsername.text.toString() + "%") }
             if (users.isEmpty()) {
                 invalidUser()
             }

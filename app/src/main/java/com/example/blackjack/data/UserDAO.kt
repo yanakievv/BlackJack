@@ -46,7 +46,7 @@ interface UserDAO {
     @Query("SELECT doubles_won FROM user_data WHERE userId = :userId")
     suspend fun getDoublesWon(userId: Int) : Int
 
-    @Query("SELECT * FROM user_data WHERE username LIKE :username AND fb_ID NOT LIKE :fbID")
+    @Query("SELECT * FROM user_data WHERE username LIKE :username AND fb_ID NOT LIKE :fbID AND fb_ID NOT LIKE 'Overall'")
     suspend fun getAllUsername(fbID: String, username: String) : Array<User>
 
     @Query("UPDATE user_data SET wins = wins + 1 WHERE userId = :userId")
