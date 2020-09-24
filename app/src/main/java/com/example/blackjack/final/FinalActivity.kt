@@ -43,7 +43,7 @@ class FinalActivity : AppCompatActivity(), Contract.FinalView {
 
                 input = InputFromMain(
                     fbID = Profile.getCurrentProfile().id,
-                    username = Profile.getCurrentProfile().firstName,
+                    username = Profile.getCurrentProfile().firstName + " " + Profile.getCurrentProfile().lastName,
                     split = intent.getStringExtra("split"),
                     outcome = intent.getStringExtra("outcome"),
                     player = intent.getStringExtra("player"),

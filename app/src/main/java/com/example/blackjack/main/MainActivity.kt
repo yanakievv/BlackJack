@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
 
         val accessToken: AccessToken? = AccessToken.getCurrentAccessToken()
         if (accessToken != null && !accessToken.isExpired) {
-            presenter.setUsername(Profile.getCurrentProfile().name)
+            presenter.setUsername(Profile.getCurrentProfile().firstName + Profile.getCurrentProfile().lastName)
             profilePic.visibility = View.VISIBLE
             profilePic.profileId = Profile.getCurrentProfile().id
         }

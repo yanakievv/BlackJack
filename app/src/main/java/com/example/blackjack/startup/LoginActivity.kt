@@ -17,7 +17,6 @@ import kotlinx.android.synthetic.main.activity_login.*
 class LoginActivity : AppCompatActivity() {
     private lateinit var callbackManager: CallbackManager
     val tag: String = "FacebookAuthentication"
-    val noLoginButton: Boolean = false
 
 
     @SuppressLint("SetTextI18n")
@@ -28,7 +27,7 @@ class LoginActivity : AppCompatActivity() {
 
         val accessToken: AccessToken? = AccessToken.getCurrentAccessToken()
         if (accessToken != null && !accessToken.isExpired) {
-            greet.text = "Hello, " + Profile.getCurrentProfile().firstName + "."
+            greet.text = "Hello, " + Profile.getCurrentProfile().firstName + " " + Profile.getCurrentProfile().lastName + "."
             profilePic.visibility = View.VISIBLE
             profilePic.profileId = Profile.getCurrentProfile().id
         }
@@ -64,7 +63,7 @@ class LoginActivity : AppCompatActivity() {
                                 ) {
                                     Log.v("facebook - profile", currentProfile.firstName)
                                     profileTracker.stopTracking()
-                                    greet.text = "Hello, " + currentProfile.firstName + "."
+                                    greet.text = "Hello, " + currentProfile.firstName + " " + Profile.getCurrentProfile().lastName + "."
                                     profilePic.visibility = View.VISIBLE
                                     profilePic.profileId = currentProfile.id
                                 }
