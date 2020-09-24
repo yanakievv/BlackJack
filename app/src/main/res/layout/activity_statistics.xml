@@ -313,25 +313,48 @@
         app:layout_constraintBottom_toTopOf="@+id/compareUser"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
+    <com.facebook.login.widget.ProfilePictureView
+        android:id="@+id/profilePic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/backButton"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.facebook.login.widget.ProfilePictureView
+        android:id="@+id/secondProfilePic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/nextRecord"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageButton
         android:id="@+id/nextRecord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
         android:layout_marginEnd="15dp"
-        android:text="@string/next"
+        android:layout_marginBottom="10dp"
+        android:contentDescription="@string/next"
+        app:layout_constraintBottom_toTopOf="@+id/secondUsername"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bestStreakSecondary" />
+        app:srcCompat="@android:drawable/ic_media_play" />
 
-    <Button
+    <ImageButton
         android:id="@+id/previousRecord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:layout_marginEnd="15dp"
-        android:text="@string/previous"
+        android:layout_marginEnd="90dp"
+        android:layout_marginBottom="10dp"
+        android:contentDescription="@string/previous"
+        android:rotation="180"
+        app:layout_constraintBottom_toTopOf="@+id/secondUsername"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nextRecord" />
+        app:srcCompat="@android:drawable/ic_media_play" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

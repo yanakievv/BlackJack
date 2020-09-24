@@ -21,7 +21,6 @@
         <activity
             android:name=".final.FinalActivity"
             android:configChanges="orientation|screenSize" />
-        <activity android:name=".startup.PlayActivity" />
         <activity
             android:name=".main.MainActivity"
             android:configChanges="orientation|screenSize" />

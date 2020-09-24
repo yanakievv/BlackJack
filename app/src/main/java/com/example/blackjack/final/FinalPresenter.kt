@@ -54,6 +54,10 @@ class FinalActivityPresenter(var view: Contract.FinalView?) : Contract.FinalActi
         val uID: Int = getUID(info.fbID as String, info.username as String)
         val overallID: Int = getUID("Overall","Overall")
 
+        if (dbDAO?.getUsername(uID) != info.username) {
+            dbDAO?.updateUser(uID, info.username as String)
+        }
+
         bestCombo = dbDAO?.getBestStreak(uID) as Int
         combo = dbDAO?.getStreak(uID) as Int
 

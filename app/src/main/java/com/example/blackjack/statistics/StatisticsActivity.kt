@@ -7,57 +7,30 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.blackjack.R
-import com.example.blackjack.data.UserDAO
+import com.example.blackjack.data.User
 import com.example.blackjack.data.UserDatabase
 import com.facebook.Profile
 import kotlinx.android.synthetic.main.activity_statistics.*
 import kotlinx.coroutines.runBlocking
 
-class User {
-    private var uID: Int = 0
-    var username: String = ""
-    var wins: Int = 0
-    var losses: Int = 0
-    var splitHandsWon: Int = 0
-    var splitHandsLost: Int = 0
-    var doublesWon: Int = 0
-    var currentStreak: Int = 0
-    var bestStreak: Int = 0
-
-    fun init(dbDAO: UserDAO, fbID: String) {
-        runBlocking {
-            if (dbDAO.checkUser(fbID) == 1) {
-                uID = dbDAO.getUserId(fbID)
-                username = dbDAO.getUsername(uID)
-                wins = dbDAO.getWins(uID)
-                losses = dbDAO.getLosses(uID)
-                splitHandsWon = dbDAO.getSplitWins(uID)
-                splitHandsLost = dbDAO.getSplitLosses(uID)
-                doublesWon = dbDAO.getDoublesWon(uID)
-                currentStreak = dbDAO.getStreak(uID)
-                bestStreak = dbDAO.getBestStreak(uID)
-            }
-            else
-            {
-                username = "Not Found."
-            }
-        }
-    }
-}
 
 class StatisticsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_statistics)
 
-        nextRecord.visibility = View.GONE
-        previousRecord.visibility = View.GONE
+        profilePic.visibility = View.VISIBLE
+        profilePic.profileId = Profile.getCurrentProfile().id
+        secondProfilePic.visibility = View.GONE
+
+        nextRecord.visibility = View.INVISIBLE
+        previousRecord.visibility = View.INVISIBLE
 
         val db = UserDatabase.getInstance(this)
         val dbDAO = db.userDAO
         val fbID = Profile.getCurrentProfile().id
-        val user = User()
-        user.init(dbDAO, fbID as String)
+        val user: User
+        runBlocking { user = dbDAO.getUserByFbID(fbID) }
         showMainData(user)
 
 
@@ -66,25 +39,55 @@ class StatisticsActivity : AppCompatActivity() {
         }
 
         compareUser.setOnClickListener{
-            nextRecord.visibility = View.VISIBLE
-            previousRecord.visibility = View.VISIBLE
-            // TODO implement searching by first name with two arrow buttons to go through the records
-            // TODO find out how to show the FB profile picture on screen for better user differentiation(might as well use the last name, but its cooler with the picture)
-        }
+            var index = 0
+            var users: Array<User>
+            runBlocking { users = dbDAO.getAllUsername(fbID, secondUsername.text.toString()) }
+            if (users.isEmpty()) {
+                invalidUser()
+            }
+            else {
+                secondProfilePic.visibility = View.VISIBLE
+                secondProfilePic.profileId = users[index].fbID
+                showSecondaryData(users[index])
+            }
 
-        nextRecord.setOnClickListener{
+            if (users.size == 1 || users.isEmpty()) {
+                nextRecord.visibility = View.INVISIBLE
+                previousRecord.visibility = View.INVISIBLE
+            }
+            else {
+                nextRecord.visibility = View.VISIBLE
+                previousRecord.visibility = View.VISIBLE
+            }
 
-        }
+            nextRecord.setOnClickListener{
+                if (users.isNotEmpty() && index + 1 < users.size) {
+                    previousRecord.visibility = View.VISIBLE
+                    showSecondaryData(users[++index])
+                    secondProfilePic.profileId = users[index].fbID
+                    if (index == users.size - 1) {
+                        nextRecord.visibility = View.INVISIBLE
+                    }
+                }
+            }
 
-        previousRecord.setOnClickListener{
-
+            previousRecord.setOnClickListener{
+                if (users.isNotEmpty() && index - 1 >= 0) {
+                    nextRecord.visibility = View.VISIBLE
+                    showSecondaryData(users[--index])
+                    secondProfilePic.profileId = users[index].fbID
+                    if (index == 0) {
+                        previousRecord.visibility = View.INVISIBLE
+                    }
+                }
+            }
         }
 
         overallStats.setOnClickListener{
             nextRecord.visibility = View.GONE
             previousRecord.visibility = View.GONE
-            val overall = User()
-            overall.init(dbDAO, "Overall")
+            val overall: User
+            runBlocking { overall = dbDAO.getUserByFbID("Overall") }
             showSecondaryData(overall)
         }
     }
@@ -125,6 +128,11 @@ class StatisticsActivity : AppCompatActivity() {
                 colourTexts(bestStreak, bestStreakSecondary, false)
 
             } else {
+
+                nextRecord.visibility = View.GONE
+                previousRecord.visibility = View.GONE
+                secondProfilePic.visibility = View.GONE
+
                 restoreColours()
                 currentStreakSecondary.text = ""
                 bestStreakSecondary.text = ""
@@ -132,17 +140,26 @@ class StatisticsActivity : AppCompatActivity() {
         }
         else
         {
-            usernameSecondary.text = "Not Found."
-            winsSecondary.text = ""
-            lossesSecondary.text = ""
-            splitHandsWonSecondary.text = ""
-            splitHandsLostSecondary.text = ""
-            doublesWonSecondary.text = ""
-            currentStreakSecondary.text = ""
-            bestStreakSecondary.text = ""
-
-            restoreColours()
+            invalidUser()
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun invalidUser() {
+        nextRecord.visibility = View.GONE
+        previousRecord.visibility = View.GONE
+        secondProfilePic.visibility = View.GONE
+
+        usernameSecondary.text = "Not Found."
+        winsSecondary.text = ""
+        lossesSecondary.text = ""
+        splitHandsWonSecondary.text = ""
+        splitHandsLostSecondary.text = ""
+        doublesWonSecondary.text = ""
+        currentStreakSecondary.text = ""
+        bestStreakSecondary.text = ""
+
+        restoreColours()
     }
 
     fun restoreColours()
@@ -165,8 +182,16 @@ class StatisticsActivity : AppCompatActivity() {
     }
 
     fun colourTexts(left: TextView, right: TextView, reverse: Boolean) {
-        if (Integer.valueOf(left.text.takeLast(1).toString()) >= Integer.valueOf(right.text.takeLast(1).toString()) && !reverse) {
-            if (Integer.valueOf(left.text.takeLast(1).toString()) != Integer.valueOf(right.text.takeLast(1).toString())) {
+        if (Integer.valueOf(left.text.takeLast(1).toString()) >= Integer.valueOf(
+                right.text.takeLast(
+                    1
+                ).toString()
+            ) && !reverse) {
+            if (Integer.valueOf(left.text.takeLast(1).toString()) != Integer.valueOf(
+                    right.text.takeLast(
+                        1
+                    ).toString()
+                )) {
                 left.setTextColor(Color.parseColor("#32CD32"))
                 right.setTextColor(Color.parseColor("#FF0000"))
             }
@@ -179,8 +204,16 @@ class StatisticsActivity : AppCompatActivity() {
             left.setTextColor(Color.parseColor("#FF0000"))
             right.setTextColor(Color.parseColor("#32CD32"))
         }
-        else if (Integer.valueOf(left.text.takeLast(1).toString()) >= Integer.valueOf(right.text.takeLast(1).toString()) && reverse) {
-            if (Integer.valueOf(left.text.takeLast(1).toString()) != Integer.valueOf(right.text.takeLast(1).toString())) {
+        else if (Integer.valueOf(left.text.takeLast(1).toString()) >= Integer.valueOf(
+                right.text.takeLast(
+                    1
+                ).toString()
+            ) && reverse) {
+            if (Integer.valueOf(left.text.takeLast(1).toString()) != Integer.valueOf(
+                    right.text.takeLast(
+                        1
+                    ).toString()
+                )) {
                 left.setTextColor(Color.parseColor("#FF0000"))
                 right.setTextColor(Color.parseColor("#32CD32"))
             }
@@ -194,7 +227,4 @@ class StatisticsActivity : AppCompatActivity() {
             right.setTextColor(Color.parseColor("#FF0000"))
         }
     }
-
-    @SuppressLint("DefaultLocale")
-    fun String.capitalizeWords(): String = split(" ").map { it.capitalize() }.joinToString(" ")
 }

@@ -2,6 +2,8 @@ package com.example.blackjack.main
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -13,6 +15,7 @@ import com.example.blackjack.final.FinalActivity
 import com.facebook.AccessToken
 import com.facebook.Profile
 import kotlinx.android.synthetic.main.activity_main.*
+import java.net.URL
 import java.util.*
 import kotlin.concurrent.schedule
 
@@ -80,9 +83,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
         val accessToken: AccessToken? = AccessToken.getCurrentAccessToken()
         if (accessToken != null && !accessToken.isExpired) {
             presenter.setUsername(Profile.getCurrentProfile().name)
+            profilePic.visibility = View.VISIBLE
+            profilePic.profileId = Profile.getCurrentProfile().id
         }
         else {
             presenter.setUsername("Player")
+            profilePic.visibility = View.GONE
         }
 
         dealerView.add(dealerCard1)
@@ -190,6 +196,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
         Timer("pause", false).schedule(2000) {
             startActivity(finalIntent)
         }
+    }
+
+    fun getFacebookProfilePicture(userID: String): Bitmap? {
+        val imageURL = URL("https://graph.facebook.com/$userID/picture?type=large")
+        return BitmapFactory.decodeStream(imageURL.openConnection().getInputStream())
     }
 
 

@@ -3,6 +3,7 @@ package com.example.blackjack.final
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.blackjack.R
@@ -50,6 +51,8 @@ class FinalActivity : AppCompatActivity(), Contract.FinalView {
                     double = intent.getStringExtra("double")
                 )
 
+                profilePic.visibility = View.VISIBLE
+                profilePic.profileId = Profile.getCurrentProfile().id
 
                 CoroutineScope(Dispatchers.IO).launch {
                     presenter.process(input as InputFromMain)
@@ -65,6 +68,7 @@ class FinalActivity : AppCompatActivity(), Contract.FinalView {
                     dealer = intent.getStringExtra("dealer"),
                     double = intent.getStringExtra("double")
                 )
+                profilePic.visibility = View.GONE
             }
             if (input?.split == "f") {
                 when (input?.outcome) {
