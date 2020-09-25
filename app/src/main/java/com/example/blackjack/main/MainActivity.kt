@@ -47,14 +47,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
         setPresenter(MainActivityPresenter(this))
 
 
-        presenter.init()
+        presenter.init(this)
 
     }
 
     override fun onClick(v: View) {
         when (v.id) {
             R.id.buttonHit -> presenter.hitAction()
-            R.id.buttonPass -> presenter.dealerTurn()
+            R.id.buttonPass -> presenter.standAction()
             R.id.buttonDouble -> presenter.doubleAction()
             R.id.buttonSplit -> presenter.splitAction()
         }
@@ -79,16 +79,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
     }
 
     override fun init() {
-
         val accessToken: AccessToken? = AccessToken.getCurrentAccessToken()
         if (accessToken != null && !accessToken.isExpired) {
-            presenter.setUsername(Profile.getCurrentProfile().firstName + Profile.getCurrentProfile().lastName)
             profilePic.visibility = View.VISIBLE
             profilePic.profileId = Profile.getCurrentProfile().id
         }
         else {
-            presenter.setUsername("Player")
-            profilePic.visibility = View.GONE
+            profilePic.visibility = View.INVISIBLE
         }
 
         dealerView.add(dealerCard1)
@@ -180,7 +177,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
         val finalIntent = Intent(this, FinalActivity::class.java)
         finalIntent.putExtra("double", double)
         finalIntent.putExtra("split", split)
-        finalIntent.putExtra("username", presenter.getUsername())
 
         if (split == "t") {
             finalIntent.putExtra("outcome", presenter.getDealerSum().toString())

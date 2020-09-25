@@ -10,6 +10,7 @@ import com.example.blackjack.R
 import com.example.blackjack.data.User
 import com.example.blackjack.data.UserDatabase
 import com.facebook.Profile
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import kotlinx.android.synthetic.main.activity_statistics.*
 import kotlinx.coroutines.runBlocking
 
@@ -19,16 +20,25 @@ class StatisticsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_statistics)
 
-        profilePic.visibility = View.VISIBLE
-        profilePic.profileId = Profile.getCurrentProfile().id
-        secondProfilePic.visibility = View.GONE
+        secondProfilePic.visibility = View.INVISIBLE
 
         nextRecord.visibility = View.INVISIBLE
         previousRecord.visibility = View.INVISIBLE
 
         val db = UserDatabase.getInstance(this)
         val dbDAO = db.userDAO
-        val fbID = Profile.getCurrentProfile().id
+        val fbID: String
+        if (Profile.getCurrentProfile() != null) {
+            fbID = Profile.getCurrentProfile().id
+            profilePic.visibility = View.VISIBLE
+            profilePic.profileId = Profile.getCurrentProfile().id
+        }
+        else {
+            fbID = GoogleSignIn.getLastSignedInAccount(this)!!.id as String
+            profilePic.removeAllViews()
+            secondProfilePic.removeAllViews()
+
+        }
         val user: User
         runBlocking { user = dbDAO.getUserByFbID(fbID) }
         showMainData(user)
@@ -41,30 +51,30 @@ class StatisticsActivity : AppCompatActivity() {
         compareUser.setOnClickListener{
             var index = 0
             var users: Array<User>
-            runBlocking { users = dbDAO.getAllUsername(fbID, secondUsername.text.toString() + "%") }
+            runBlocking { users = dbDAO.getAllUsername(fbID,"%" + secondUsername.text.toString() + "%") }
             if (users.isEmpty()) {
                 invalidUser()
             }
             else {
                 secondProfilePic.visibility = View.VISIBLE
-                secondProfilePic.profileId = users[index].fbID
+                secondProfilePic.profileId = users[index].accID
                 showSecondaryData(users[index])
+
             }
 
             if (users.size == 1 || users.isEmpty()) {
                 nextRecord.visibility = View.INVISIBLE
-                previousRecord.visibility = View.INVISIBLE
+
             }
             else {
                 nextRecord.visibility = View.VISIBLE
-                previousRecord.visibility = View.VISIBLE
             }
 
             nextRecord.setOnClickListener{
                 if (users.isNotEmpty() && index + 1 < users.size) {
                     previousRecord.visibility = View.VISIBLE
                     showSecondaryData(users[++index])
-                    secondProfilePic.profileId = users[index].fbID
+                    secondProfilePic.profileId = users[index].accID
                     if (index == users.size - 1) {
                         nextRecord.visibility = View.INVISIBLE
                     }
@@ -75,7 +85,7 @@ class StatisticsActivity : AppCompatActivity() {
                 if (users.isNotEmpty() && index - 1 >= 0) {
                     nextRecord.visibility = View.VISIBLE
                     showSecondaryData(users[--index])
-                    secondProfilePic.profileId = users[index].fbID
+                    secondProfilePic.profileId = users[index].accID
                     if (index == 0) {
                         previousRecord.visibility = View.INVISIBLE
                     }

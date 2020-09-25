@@ -8,7 +8,7 @@ interface Contract {
 
     interface MainActivityPresenter: BasePresenter {
 
-        fun init()
+        fun init(context: Context)
         fun initGame()
 
         fun getDealerHand(): MutableList<Card>
@@ -19,11 +19,8 @@ interface Contract {
         fun getPlayerSplitSum(): Int
         fun getDealerSum(): Int
 
-        fun setUsername(userName: String)
-        fun getUsername(): String
-
         fun hitAction()
-        fun dealerTurn()
+        fun standAction()
         fun splitAction()
         fun doubleAction()
     }
@@ -50,11 +47,12 @@ interface Contract {
 
         fun connect(context: Context)
         suspend fun process(info: InputFromMain)
+        fun setOutcomeLogger(context: Context)
 
 
     }
 
-    interface FinalView: BaseView<FinalActivityPresenter> {
+    interface FinalView: BaseView<FinalActivityPresenter>
 
-    }
+
 }

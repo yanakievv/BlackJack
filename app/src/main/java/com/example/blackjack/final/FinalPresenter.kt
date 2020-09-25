@@ -1,6 +1,7 @@
 package com.example.blackjack.final
 
 import android.content.Context
+import com.example.blackjack.analytics.Analytics
 import com.example.blackjack.contract.Contract
 import com.example.blackjack.data.User
 import com.example.blackjack.data.UserDAO
@@ -10,6 +11,7 @@ import kotlinx.coroutines.runBlocking
 class FinalActivityPresenter(var view: Contract.FinalView?) : Contract.FinalActivityPresenter {
     private var db: UserDatabase? = null
     private var dbDAO : UserDAO? = null
+    private var firebase: Analytics = Analytics()
 
     var bestCombo: Int = 0
     var combo: Int = 0
@@ -33,7 +35,7 @@ class FinalActivityPresenter(var view: Contract.FinalView?) : Contract.FinalActi
         runBlocking {
             if (dbDAO?.checkUser(fbID) == 0)
             {
-                dbDAO?.addUser(User(fbID = fbID, username = username))
+                dbDAO?.addUser(User(accID = fbID, username = username))
             }
             uID = dbDAO?.getUserId(fbID) as Int
         }
@@ -48,10 +50,11 @@ class FinalActivityPresenter(var view: Contract.FinalView?) : Contract.FinalActi
     override fun connect(context: Context) {
         db = UserDatabase.getInstance(context)
         dbDAO = db?.userDAO
+        setOutcomeLogger(context)
     }
 
     override suspend fun process(info: InputFromMain) {
-        val uID: Int = getUID(info.fbID as String, info.username as String)
+        val uID: Int = getUID(info.accID as String, info.username as String)
         val overallID: Int = getUID("Overall","Overall")
 
         if (dbDAO?.getUsername(uID) != info.username) {
@@ -63,11 +66,13 @@ class FinalActivityPresenter(var view: Contract.FinalView?) : Contract.FinalActi
 
         if (info.split == "f") {
             if (info.outcome == "Bust!" || info.outcome == "Dealer won.") {
+                firebase.logOutcome(-1)
                 dbDAO?.incLoss(uID)
                 dbDAO?.incLoss(overallID)
                 alterStreak(false, uID)
             }
             else if (info.outcome != "Tied.") {
+                firebase.logOutcome(1)
                 dbDAO?.incWin(uID)
                 dbDAO?.incWin(overallID)
                 alterStreak(true, uID)
@@ -77,34 +82,46 @@ class FinalActivityPresenter(var view: Contract.FinalView?) : Contract.FinalActi
                     dbDAO?.incDoubleWon(overallID)
                 }
             }
+            else firebase.logOutcome(0)
         }
         else
         {
+            var outcome = 0
             if (compareHands(Integer.valueOf(info.player as String), Integer.valueOf(info.outcome as String)))
             {
+                outcome++
                 dbDAO?.incSplitWin(uID)
                 dbDAO?.incSplitWin(overallID)
                 alterStreak(true, uID)
             }
             else if (Integer.valueOf(info.player as String) != Integer.valueOf(info.outcome as String) || Integer.valueOf(info.player as String) > 21)
             {
+                outcome--
                 dbDAO?.incSplitLoss(uID)
                 dbDAO?.incSplitLoss(overallID)
                 alterStreak(false, uID)
             }
             if (compareHands(Integer.valueOf(info.dealer as String), Integer.valueOf(info.outcome as String)))
             {
+                outcome++
                 dbDAO?.incSplitWin(uID)
                 dbDAO?.incSplitWin(overallID)
                 alterStreak(true, uID)
             }
             else if (Integer.valueOf(info.dealer as String) != Integer.valueOf(info.outcome as String) || Integer.valueOf(info.dealer as String) > 21)
             {
+                outcome--
                 dbDAO?.incSplitLoss(uID)
                 dbDAO?.incSplitLoss(overallID)
                 alterStreak(false, uID)
             }
+            firebase.logOutcome(outcome)
         }
+    }
+
+    override fun setOutcomeLogger(context: Context) {
+        firebase.init(context)
+
     }
 
     override fun onDestroy() {

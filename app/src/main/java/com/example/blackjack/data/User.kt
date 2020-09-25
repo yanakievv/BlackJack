@@ -9,32 +9,35 @@ data class User(
     @PrimaryKey(autoGenerate = true)
     val userId: Int = 0,
 
-    @ColumnInfo(name = "fb_ID")
-    val fbID: String,
+    @ColumnInfo(name = "acc_ID", defaultValue = "")
+    val accID: String,
 
-    @ColumnInfo(name = "username")
+    @ColumnInfo(name = "username", defaultValue = "")
     val username: String,
 
-    @ColumnInfo(name = "wins")
+    @ColumnInfo(name = "wins", defaultValue = "0")
     val wins: Int = 0,
 
-    @ColumnInfo(name = "losses")
+    @ColumnInfo(name = "losses", defaultValue = "0")
     val losses: Int = 0,
 
-    @ColumnInfo(name = "split_hands_won")
+    @ColumnInfo(name = "split_hands_won", defaultValue = "0")
     val splitHandsWon: Int = 0,
 
-    @ColumnInfo(name = "split_hands_lost")
+    @ColumnInfo(name = "split_hands_lost", defaultValue = "0")
     val splitHandsLost: Int = 0,
 
-    @ColumnInfo(name = "doubles_won")
+    @ColumnInfo(name = "doubles_won", defaultValue = "0")
     val doublesWon: Int = 0,
 
-    @ColumnInfo(name = "current_streak")
+    @ColumnInfo(name = "current_streak", defaultValue = "0")
     val currentStreak: Int = 0,
 
-    @ColumnInfo(name = "best_streak")
-    val bestStreak: Int = 0
+    @ColumnInfo(name = "best_streak", defaultValue = "0")
+    val bestStreak: Int = 0,
+
+    @ColumnInfo(name = "wallet", defaultValue = "0")
+    val wallet: Int = 0
 )
 
 

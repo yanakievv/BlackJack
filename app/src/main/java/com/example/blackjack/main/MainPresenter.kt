@@ -1,12 +1,16 @@
 package com.example.blackjack.main
 
+import android.content.Context
+import com.example.blackjack.analytics.Analytics
 import com.example.blackjack.contract.Contract
 
 class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivityPresenter {
-    var game = Game()
+    private var game = Game()
+    private val firebase = Analytics()
 
-    override fun init() {
+    override fun init(context: Context) {
         view?.disableButtons()
+        firebase.init(context)
 
         for (decks in 1..game.deck.numOfDecks) {
             for (i in 2..10) {
@@ -113,16 +117,9 @@ class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivit
         return game.dealerSum
     }
 
-    override fun setUsername(userName: String) {
-        game.userName = userName
-    }
-
-    override fun getUsername(): String {
-        return game.userName
-    }
-
     override fun hitAction() {
         view?.disableButtons()
+        firebase.logMove(1)
         val newCard = game.it.next()
 
         if (newCard.value == 11) {
@@ -166,7 +163,12 @@ class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivit
         view?.enableButtons()
     }
 
-    override fun dealerTurn() {
+    override fun standAction() {
+        firebase.logMove(0)
+        dealerTurn()
+    }
+
+    private fun dealerTurn() {
         view?.disableButtons()
 
         if (!game.hasHadSplit && game.playerSum > 21) {
@@ -232,6 +234,7 @@ class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivit
 
     override fun splitAction() {
         if (game.playerArr.size == 2 && game.playerArr[0].value == game.playerArr[1].value && !game.hasHadSplit) {
+            firebase.logMove(3)
             initSplit()
         }
     }
@@ -273,6 +276,7 @@ class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivit
 
     override fun doubleAction() {
         if (game.playerArr.size == 2 || (game.hasHadSplit && game.playerSplitArr.size == 2)) {
+            firebase.logMove(2)
             game.hasDoubled = true
             hitAction()
             dealerTurn()

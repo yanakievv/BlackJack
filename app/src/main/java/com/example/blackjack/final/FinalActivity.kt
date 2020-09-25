@@ -14,12 +14,13 @@ import com.example.blackjack.statistics.StatisticsActivity
 import com.facebook.AccessToken
 import com.facebook.Profile
 import com.facebook.stetho.Stetho
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import kotlinx.android.synthetic.main.activity_final.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class InputFromMain(var fbID: String?, var username: String?, var split: String?, var outcome: String?, var player: String?, var dealer: String?, var double: String?)
+class InputFromMain(var accID: String?, var username: String?, var split: String?, var outcome: String?, var player: String?, var dealer: String?, var double: String?)
 
 
 
@@ -37,12 +38,13 @@ class FinalActivity : AppCompatActivity(), Contract.FinalView {
 
         if (savedInstanceState == null) {
             val accessToken: AccessToken? = AccessToken.getCurrentAccessToken()
+            val account = GoogleSignIn.getLastSignedInAccount(this)
             if (accessToken != null && !accessToken.isExpired) {
                 setPresenter(FinalActivityPresenter(this))
                 presenter.connect(this)
 
                 input = InputFromMain(
-                    fbID = Profile.getCurrentProfile().id,
+                    accID = Profile.getCurrentProfile().id,
                     username = Profile.getCurrentProfile().firstName + " " + Profile.getCurrentProfile().lastName,
                     split = intent.getStringExtra("split"),
                     outcome = intent.getStringExtra("outcome"),
@@ -58,9 +60,29 @@ class FinalActivity : AppCompatActivity(), Contract.FinalView {
                     presenter.process(input as InputFromMain)
                 }
             }
+            else if (account != null) {
+                setPresenter(FinalActivityPresenter(this))
+                presenter.connect(this)
+
+                input = InputFromMain(
+                    accID = account.id,
+                    username = account.displayName,
+                    split = intent.getStringExtra("split"),
+                    outcome = intent.getStringExtra("outcome"),
+                    player = intent.getStringExtra("player"),
+                    dealer = intent.getStringExtra("dealer"),
+                    double = intent.getStringExtra("double")
+                )
+
+                profilePic.visibility = View.INVISIBLE
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    presenter.process(input as InputFromMain)
+                }
+            }
             else {
                 input = InputFromMain(
-                    fbID = null,
+                    accID = null,
                     username = "Player",
                     split = intent.getStringExtra("split"),
                     outcome = intent.getStringExtra("outcome"),
@@ -68,7 +90,7 @@ class FinalActivity : AppCompatActivity(), Contract.FinalView {
                     dealer = intent.getStringExtra("dealer"),
                     double = intent.getStringExtra("double")
                 )
-                profilePic.visibility = View.GONE
+                profilePic.visibility = View.INVISIBLE
             }
             if (input?.split == "f") {
                 when (input?.outcome) {
@@ -79,7 +101,7 @@ class FinalActivity : AppCompatActivity(), Contract.FinalView {
             }
             else split()
         }
-        
+
         restartButton.setOnClickListener{
             val restartGame = Intent(applicationContext, MainActivity::class.java)
             startActivity(restartGame)
@@ -90,10 +112,10 @@ class FinalActivity : AppCompatActivity(), Contract.FinalView {
             startActivity(changePlayer)
         }
         statistics.setOnClickListener{
+            val account = GoogleSignIn.getLastSignedInAccount(this)
             val accessToken: AccessToken? = AccessToken.getCurrentAccessToken()
-            if (accessToken != null && !accessToken.isExpired) {
+            if ((accessToken != null && !accessToken.isExpired) || account != null) {
                 val statistics = Intent(applicationContext, StatisticsActivity::class.java)
-                statistics.putExtra("username", input?.username)
                 startActivity(statistics)
             }
             else {
@@ -107,7 +129,7 @@ class FinalActivity : AppCompatActivity(), Contract.FinalView {
     @SuppressLint("SetTextI18n")
     fun regular() {
         finalText.text = input?.outcome
-        playerScore.text = "${input?.username}: ${input?.player}"
+        playerScore.text = "${input?.username?.substringBefore(' ')}: ${input?.player}"
         dealerScore.text = "Dealer: ${input?.dealer}"
 
     }
@@ -115,7 +137,7 @@ class FinalActivity : AppCompatActivity(), Contract.FinalView {
     @SuppressLint("SetTextI18n")
     fun bust() {
         finalText.text = "Bust!"
-        playerScore.text = "${input?.username}: ${input?.player}"
+        playerScore.text = "${input?.username?.substringBefore(' ')}: ${input?.player}"
     }
 
     @SuppressLint("SetTextI18n")
@@ -126,8 +148,8 @@ class FinalActivity : AppCompatActivity(), Contract.FinalView {
     @SuppressLint("SetTextI18n")
     fun split() {
         finalText.text = "Dealer: ${input?.outcome}"
-        playerScore.text = "${input?.username} hand #2: ${input?.dealer}"
-        dealerScore.text = "${input?.username} hand #1: ${input?.player}"
+        playerScore.text = "${input?.username?.substringBefore(' ')} hand #2: ${input?.dealer}"
+        dealerScore.text = "${input?.username?.substringBefore(' ')} hand #1: ${input?.player}"
     }
 
     override fun setPresenter(presenter: Contract.FinalActivityPresenter) {
