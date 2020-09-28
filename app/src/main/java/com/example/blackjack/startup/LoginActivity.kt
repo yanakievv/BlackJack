@@ -8,6 +8,8 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.blackjack.R
+import com.example.blackjack.data.UserDAO
+import com.example.blackjack.data.UserDatabase
 import com.example.blackjack.main.MainActivity
 import com.facebook.*
 import com.facebook.login.LoginManager
@@ -15,6 +17,10 @@ import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 private const val RC_SIGN_IN = 7
 
@@ -22,6 +28,8 @@ private const val RC_SIGN_IN = 7
 class LoginActivity : AppCompatActivity() {
     private lateinit var callbackManager: CallbackManager
     val tag: String = "FacebookAuthentication"
+    private var db: UserDatabase? = null
+    private var dbDAO: UserDAO? = null
 
 
     @SuppressLint("SetTextI18n")
@@ -30,24 +38,49 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         profilePic.visibility = View.GONE
         callbackManager = CallbackManager.Factory.create()
+        db = UserDatabase.getInstance(this)
+        dbDAO = db?.userDAO
 
-        val accessToken: AccessToken? = AccessToken.getCurrentAccessToken()
+        var accessToken: AccessToken? = AccessToken.getCurrentAccessToken()
+        var account = GoogleSignIn.getLastSignedInAccount(this)
 
         if (accessToken != null && !accessToken.isExpired) {
             greet.text = "Hello, " + Profile.getCurrentProfile().firstName + " " + Profile.getCurrentProfile().lastName + "."
+            CoroutineScope(Dispatchers.IO).launch {  walletText.text = "Wallet: " + dbDAO?.getWallet(Profile.getCurrentProfile().id as String).toString() + "$" }
             profilePic.visibility = View.VISIBLE
             profilePic.profileId = Profile.getCurrentProfile().id
             GloginButton.visibility = View.INVISIBLE
             FBloginButton.visibility = View.VISIBLE
+            getCashButton.visibility = View.VISIBLE
+
         }
-        else if (GoogleSignIn.getLastSignedInAccount(this) != null) {
-            greet.text = "Hello, " + GoogleSignIn.getLastSignedInAccount(this)?.displayName + "."
+        else if (account != null) {
+            greet.text = "Hello, " + account.displayName + "."
+            CoroutineScope(Dispatchers.IO).launch { walletText.text = "Wallet: " + dbDAO?.getWallet(account!!.id as String).toString() + "$" }
             FBloginButton.visibility = View.INVISIBLE
+            getCashButton.visibility = View.VISIBLE
+
             swapGButton(1)
         }
         else {
             FBloginButton.visibility = View.VISIBLE
             GloginButton.visibility = View.VISIBLE
+            getCashButton.visibility = View.INVISIBLE
+        }
+
+        getCashButton.setOnClickListener {
+            accessToken = AccessToken.getCurrentAccessToken()
+            account = GoogleSignIn.getLastSignedInAccount(this)
+            if (accessToken != null && !accessToken!!.isExpired) {
+                runBlocking { dbDAO?.updateWallet(Profile.getCurrentProfile().id, 10000)
+                    walletText.text = "Wallet: " + dbDAO?.getWallet(Profile.getCurrentProfile().id as String).toString() + "$"
+                }
+            }
+            else if (account != null) {
+                runBlocking { dbDAO?.updateWallet(GoogleSignIn.getLastSignedInAccount(applicationContext)?.id as String, 10000)
+                    walletText.text = "Wallet: " + dbDAO?.getWallet(GoogleSignIn.getLastSignedInAccount(applicationContext)?.id as String).toString() + "$"
+                }
+            }
         }
 
         GloginButton.setOnClickListener {
@@ -57,7 +90,6 @@ class LoginActivity : AppCompatActivity() {
             val mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
             if (GoogleSignIn.getLastSignedInAccount(this) == null) { // Google Login
-
                 val signInIntent = mGoogleSignInClient.signInIntent
                 startActivityForResult(signInIntent, RC_SIGN_IN)
             }
@@ -66,6 +98,9 @@ class LoginActivity : AppCompatActivity() {
                 swapGButton(0)
                 greet.text = ""
                 FBloginButton.visibility = View.VISIBLE
+                walletText.text = ""
+                getCashButton.visibility = View.INVISIBLE
+
             }
         }
 
@@ -80,6 +115,8 @@ class LoginActivity : AppCompatActivity() {
                     greet.text = ""
                     profilePic.visibility = View.GONE
                     GloginButton.visibility = View.VISIBLE
+                    getCashButton.visibility = View.INVISIBLE
+                    walletText.text = ""
                 }.executeAsync()
             }
 
@@ -101,9 +138,12 @@ class LoginActivity : AppCompatActivity() {
                                     profileTracker.stopTracking()
                                     greet.text =
                                         "Hello, " + currentProfile.firstName + " " + currentProfile.lastName + "."
+                                    runBlocking {  walletText.text = "Wallet: " + dbDAO?.getWallet(currentProfile.id as String).toString() + "$" }
                                     profilePic.visibility = View.VISIBLE
                                     profilePic.profileId = currentProfile.id
                                     GloginButton.visibility = View.INVISIBLE
+                                    getCashButton.visibility = View.VISIBLE
+
                                 }
                             }
 
@@ -126,6 +166,7 @@ class LoginActivity : AppCompatActivity() {
         startButton.setOnClickListener{
             startActivity(Intent(applicationContext, MainActivity::class.java))
         }
+
     }
 
 
@@ -138,7 +179,9 @@ class LoginActivity : AppCompatActivity() {
             if (GoogleSignIn.getLastSignedInAccount(this) != null) {
                 greet.text = "Hello, " + GoogleSignIn.getLastSignedInAccount(this)?.displayName + "."
                 FBloginButton.visibility = View.INVISIBLE
+                getCashButton.visibility = View.VISIBLE
                 swapGButton(1)
+                CoroutineScope(Dispatchers.IO).launch {  walletText.text = "Wallet: " + dbDAO?.getWallet(GoogleSignIn.getLastSignedInAccount(applicationContext)?.id as String).toString() + "$" }
             }
 
         }
@@ -155,6 +198,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
     }
+
 
 
 }

@@ -23,6 +23,10 @@ interface Contract {
         fun standAction()
         fun splitAction()
         fun doubleAction()
+
+        fun connect(context: Context)
+        fun setBet(userID: String, bet: Int, context: Context): Boolean
+        fun getBet(): Int
     }
 
     interface MainView: BaseView<MainActivityPresenter> {
@@ -31,12 +35,12 @@ interface Contract {
         fun refreshView()
         fun cleanUpView()
 
-        fun bust()
+        fun bust(doubled: String)
         fun win(doubled: String)
-        fun loss()
+        fun loss(doubled: String)
         fun tie()
         fun twentyOne()
-        fun split()
+        fun split(doubled: String, secondDouble: String)
 
         fun enableButtons()
         fun disableButtons()

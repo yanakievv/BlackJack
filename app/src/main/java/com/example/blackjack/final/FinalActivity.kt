@@ -20,7 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class InputFromMain(var accID: String?, var username: String?, var split: String?, var outcome: String?, var player: String?, var dealer: String?, var double: String?)
+class InputFromMain(var accID: String?, var username: String?, var split: String?, var outcome: String?, var player: String?, var dealer: String?, var double: String?, var secondDouble: String?, var bet: Int?)
 
 
 
@@ -50,7 +50,9 @@ class FinalActivity : AppCompatActivity(), Contract.FinalView {
                     outcome = intent.getStringExtra("outcome"),
                     player = intent.getStringExtra("player"),
                     dealer = intent.getStringExtra("dealer"),
-                    double = intent.getStringExtra("double")
+                    double = intent.getStringExtra("double"),
+                    secondDouble = intent.getStringExtra("secondDouble"),
+                    bet = intent.getIntExtra("bet", 0)
                 )
 
                 profilePic.visibility = View.VISIBLE
@@ -71,7 +73,9 @@ class FinalActivity : AppCompatActivity(), Contract.FinalView {
                     outcome = intent.getStringExtra("outcome"),
                     player = intent.getStringExtra("player"),
                     dealer = intent.getStringExtra("dealer"),
-                    double = intent.getStringExtra("double")
+                    double = intent.getStringExtra("double"),
+                    secondDouble = intent.getStringExtra("secondDouble"),
+                    bet = intent.getIntExtra("bet", 0)
                 )
 
                 profilePic.visibility = View.INVISIBLE
@@ -88,7 +92,9 @@ class FinalActivity : AppCompatActivity(), Contract.FinalView {
                     outcome = intent.getStringExtra("outcome"),
                     player = intent.getStringExtra("player"),
                     dealer = intent.getStringExtra("dealer"),
-                    double = intent.getStringExtra("double")
+                    double = intent.getStringExtra("double"),
+                    secondDouble = intent.getStringExtra("secondDouble"),
+                    bet = 0
                 )
                 profilePic.visibility = View.INVISIBLE
             }

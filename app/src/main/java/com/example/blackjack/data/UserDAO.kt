@@ -13,9 +13,6 @@ interface UserDAO {
     @Query("SELECT EXISTS(SELECT 1 FROM user_data WHERE acc_ID = :accID LIMIT 1)")
     suspend fun checkUser(accID: String) : Int
 
-    @Query("UPDATE user_data SET username = :username WHERE userId = :userId")
-    suspend fun updateUser(userId: Int, username: String)
-
     @Query("SELECT userId FROM user_data WHERE acc_ID = :accID")
     suspend fun getUserId(accID: String) : Int
 
@@ -46,8 +43,14 @@ interface UserDAO {
     @Query("SELECT doubles_won FROM user_data WHERE userId = :userId")
     suspend fun getDoublesWon(userId: Int) : Int
 
+    @Query("SELECT wallet FROM user_data WHERE acc_ID = :accId")
+    suspend fun getWallet(accId: String) : Int
+
     @Query("SELECT * FROM user_data WHERE username LIKE :username AND acc_ID NOT LIKE :accID AND acc_ID NOT LIKE 'Overall'")
     suspend fun getAllUsername(accID: String, username: String) : Array<User>
+
+    @Query("UPDATE user_data SET username = :username WHERE userId = :userId")
+    suspend fun updateUser(userId: Int, username: String)
 
     @Query("UPDATE user_data SET wins = wins + 1 WHERE userId = :userId")
     suspend fun incWin(userId : Int)
@@ -69,6 +72,9 @@ interface UserDAO {
 
     @Query("UPDATE user_data SET doubles_won = doubles_won + 1 WHERE userId = :userId")
     suspend fun incDoubleWon(userId : Int)
+
+    @Query("UPDATE user_data SET wallet = wallet + :sum WHERE acc_ID = :accId")
+    suspend fun updateWallet(accId: String, sum: Int)
 
     @Query("DELETE FROM user_data WHERE userId = :userId")
     suspend fun removeEntry(userId: Int)

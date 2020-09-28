@@ -32,6 +32,11 @@ class Game {
     var hasSplit: Boolean = false
     var hasHadSplit: Boolean = false
     var hasDoubled: Boolean = false
+    var hasSplitDoubled: Boolean = false
 
     var dealerHadTurn: Boolean = false
+
+    var bet: Int = 0
+    var wallet: Int = 0
+
 }

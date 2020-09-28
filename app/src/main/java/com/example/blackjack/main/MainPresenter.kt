@@ -3,15 +3,19 @@ package com.example.blackjack.main
 import android.content.Context
 import com.example.blackjack.analytics.Analytics
 import com.example.blackjack.contract.Contract
+import com.example.blackjack.data.UserDAO
+import com.example.blackjack.data.UserDatabase
+import kotlinx.coroutines.runBlocking
 
 class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivityPresenter {
     private var game = Game()
     private val firebase = Analytics()
+    private var db: UserDatabase? = null
+    private var dbDAO : UserDAO? = null
 
     override fun init(context: Context) {
         view?.disableButtons()
         firebase.init(context)
-
         for (decks in 1..game.deck.numOfDecks) {
             for (i in 2..10) {
                 game.deck.cards.add(Card(i, CardSuit.CLUBS, i.toString()))
@@ -117,6 +121,31 @@ class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivit
         return game.dealerSum
     }
 
+    override fun connect(context: Context) {
+        db = UserDatabase.getInstance(context)
+        dbDAO = db?.userDAO
+    }
+
+    override fun setBet(userID: String, bet: Int, context: Context): Boolean {
+        firebase.init(context)
+        val wallet: Int
+        runBlocking {
+            wallet = dbDAO!!.getWallet(userID) }
+        return if (wallet < bet) {
+            false
+        }
+        else {
+            game.wallet = wallet - bet
+            firebase.logBet(bet)
+            game.bet = bet
+            true
+        }
+    }
+
+    override fun getBet(): Int {
+        return game.bet
+    }
+
     override fun hitAction() {
         view?.disableButtons()
         firebase.logMove(1)
@@ -142,7 +171,7 @@ class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivit
                 dealerTurn()
             }
             else {
-                view?.bust()
+                view?.bust(if (game.hasDoubled) "t" else "f")
             }
         }
         else if (game.playerSum > 21 && game.playerAce) {
@@ -212,14 +241,14 @@ class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivit
             view?.refreshView()
 
             if (game.hasHadSplit) {
-                view?.split()
+                view?.split(if (game.hasDoubled) "t" else "f", if (game.hasSplitDoubled) "t" else "f")
             }
             else {
                 if ((game.dealerSum > 21 || game.playerSum > game.dealerSum) && game.playerSum <= 21) {
                     view?.win(if (game.hasDoubled) "t" else "f")
                 }
                 else if (game.dealerSum > game.playerSum || game.playerSum > 21) {
-                    view?.loss()
+                    view?.loss(if (game.hasDoubled) "t" else "f")
                 }
                 else {
                     view?.tie()
@@ -233,7 +262,7 @@ class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivit
     }
 
     override fun splitAction() {
-        if (game.playerArr.size == 2 && game.playerArr[0].value == game.playerArr[1].value && !game.hasHadSplit) {
+        if (game.wallet >= game.bet && game.playerArr.size == 2 && game.playerArr[0].value == game.playerArr[1].value && !game.hasHadSplit) {
             firebase.logMove(3)
             initSplit()
         }
@@ -275,9 +304,14 @@ class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivit
     }
 
     override fun doubleAction() {
-        if (game.playerArr.size == 2 || (game.hasHadSplit && game.playerSplitArr.size == 2)) {
+        if (game.wallet >= game.bet && game.playerArr.size == 2 || (game.hasHadSplit && game.playerSplitArr.size == 2)) {
             firebase.logMove(2)
-            game.hasDoubled = true
+            if (!game.hasHadSplit || (game.hasSplit && game.hasHadSplit)) {
+                game.hasDoubled = true
+            }
+            if (!game.hasSplit && game.hasHadSplit) {
+                game.hasSplitDoubled = true
+            }
             hitAction()
             dealerTurn()
         }
@@ -306,7 +340,7 @@ class MainActivityPresenter(var view: Contract.MainView?) : Contract.MainActivit
 
         if (game.playerSum == 21)
         {
-            view?.split()
+            view?.split(if (game.hasDoubled) "t" else "f", if (game.hasSplitDoubled) "t" else "f")
         }
     }
 }

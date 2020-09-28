@@ -2,8 +2,6 @@ package com.example.blackjack.main
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -14,12 +12,14 @@ import com.example.blackjack.contract.Contract
 import com.example.blackjack.final.FinalActivity
 import com.facebook.AccessToken
 import com.facebook.Profile
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import kotlinx.android.synthetic.main.activity_main.*
-import java.net.URL
 import java.util.*
 import kotlin.concurrent.schedule
 
 internal lateinit var presenter: Contract.MainActivityPresenter
+internal var lastBetVal = 0
+
 
 class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainView {
 
@@ -46,8 +46,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
 
         setPresenter(MainActivityPresenter(this))
 
-
-        presenter.init(this)
+        presenter.connect(this)
+        setBets()
+        //presenter.init(this)
 
     }
 
@@ -79,14 +80,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
     }
 
     override fun init() {
-        val accessToken: AccessToken? = AccessToken.getCurrentAccessToken()
-        if (accessToken != null && !accessToken.isExpired) {
-            profilePic.visibility = View.VISIBLE
-            profilePic.profileId = Profile.getCurrentProfile().id
-        }
-        else {
-            profilePic.visibility = View.INVISIBLE
-        }
+
+        buttonHit.visibility = View.VISIBLE
+        buttonPass.visibility = View.VISIBLE
+        buttonDouble.visibility = View.VISIBLE
+        buttonSplit.visibility = View.VISIBLE
 
         dealerView.add(dealerCard1)
         dealerView.add(dealerCard2)
@@ -133,17 +131,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
         com.example.blackjack.main.presenter = presenter
     }
 
-    override fun bust() {
+    override fun bust(doubled: String) {
         Toast.makeText(this, "Bust!", Toast.LENGTH_SHORT).show()
-        finalizeActivity("Bust!")
+        finalizeActivity("Bust!", double = doubled)
     }
 
     override fun win(doubled: String) {
         finalizeActivity("Winner!", double = doubled)
     }
 
-    override fun loss() {
-        finalizeActivity("Dealer won.")
+    override fun loss(doubled: String) {
+        finalizeActivity("Dealer won.", double = doubled)
     }
 
     override fun twentyOne() {
@@ -155,8 +153,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
         finalizeActivity("Tied.")
     }
 
-    override fun split() {
-        finalizeActivity(split = "t")
+    override fun split(doubled: String, secondDouble: String) {
+        finalizeActivity(split = "t", double = doubled, secondDouble = secondDouble)
     }
 
     override fun disableButtons() {
@@ -172,11 +170,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
         buttonSplit.isClickable = true
     }
 
-    fun finalizeActivity(outcome: String = "", split: String = "f", double: String = "f") {
+    private fun finalizeActivity(outcome: String = "", split: String = "f", double: String = "f", secondDouble: String = "f") {
 
         val finalIntent = Intent(this, FinalActivity::class.java)
         finalIntent.putExtra("double", double)
+        finalIntent.putExtra("secondDouble", secondDouble)
         finalIntent.putExtra("split", split)
+        finalIntent.putExtra("bet", presenter.getBet())
 
         if (split == "t") {
             finalIntent.putExtra("outcome", presenter.getDealerSum().toString())
@@ -194,10 +194,51 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
         }
     }
 
-    fun getFacebookProfilePicture(userID: String): Bitmap? {
-        val imageURL = URL("https://graph.facebook.com/$userID/picture?type=large")
-        return BitmapFactory.decodeStream(imageURL.openConnection().getInputStream())
+    private fun setBets() {
+
+        disableButtons()
+        var uID = ""
+        val accessToken: AccessToken? = AccessToken.getCurrentAccessToken()
+        if (accessToken != null && !accessToken.isExpired) {
+            profilePic.visibility = View.VISIBLE
+            profilePic.profileId = Profile.getCurrentProfile().id
+            uID = Profile.getCurrentProfile().id
+        }
+        else if (GoogleSignIn.getLastSignedInAccount(this) != null) {
+            profilePic.visibility = View.INVISIBLE
+
+            uID = GoogleSignIn.getLastSignedInAccount(this)!!.id as String
+        }
+        else {
+            profilePic.visibility = View.INVISIBLE
+            confirmBet.visibility = View.INVISIBLE
+            editBet.visibility = View.INVISIBLE
+            lastBet.visibility = View.INVISIBLE
+            presenter.init(this)
+        }
+
+        confirmBet.setOnClickListener {
+            if (editBet.text.toString() == "" || editBet.text.toString().toIntOrNull() == null) {
+                Toast.makeText(this, "Enter a valid bet.", Toast.LENGTH_SHORT).show()
+            }
+            else {
+                val betSuccessful = presenter.setBet(uID, Integer.valueOf(editBet.text.toString()), this)
+                if (!betSuccessful) {
+                    Toast.makeText(this, "Insufficient funds!", Toast.LENGTH_SHORT).show()
+                }
+                else {
+                    confirmBet.visibility = View.INVISIBLE
+                    editBet.visibility = View.INVISIBLE
+                    lastBet.visibility = View.INVISIBLE
+                    lastBetVal = editBet.text.toString().toInt()
+
+                    presenter.init(this)
+                }
+            }
+        }
+
+        lastBet.setOnClickListener {
+            editBet.setText(lastBetVal.toString())
+        }
     }
-
-
 }

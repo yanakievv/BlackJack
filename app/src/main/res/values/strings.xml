@@ -19,4 +19,8 @@
     <string name="fb_login_protocol_scheme">fb384120415940525</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="enter_bet">Enter Bet</string>
+    <string name="confirm_bet">Confirm Bet</string>
+    <string name="last_bet">Last Bet</string>
+    <string name="get_cash">Get Cash</string>
 </resources>

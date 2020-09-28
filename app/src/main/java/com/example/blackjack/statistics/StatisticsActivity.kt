@@ -191,16 +191,11 @@ class StatisticsActivity : AppCompatActivity() {
         bestStreakSecondary.setTextColor(Color.parseColor("#FFFFFF"))
     }
 
-    fun colourTexts(left: TextView, right: TextView, reverse: Boolean) {
-        if (Integer.valueOf(left.text.takeLast(1).toString()) >= Integer.valueOf(
-                right.text.takeLast(
-                    1
-                ).toString()
+    private fun colourTexts(left: TextView, right: TextView, reverse: Boolean) {
+        if (Integer.valueOf(left.text.toString().substringAfter(": ")) >= Integer.valueOf(right.text.toString().substringAfter(": ")
             ) && !reverse) {
-            if (Integer.valueOf(left.text.takeLast(1).toString()) != Integer.valueOf(
-                    right.text.takeLast(
-                        1
-                    ).toString()
+            if (Integer.valueOf(left.text.toString().substringAfter(": ")) != Integer.valueOf(
+                    right.text.toString().substringAfter(": ")
                 )) {
                 left.setTextColor(Color.parseColor("#32CD32"))
                 right.setTextColor(Color.parseColor("#FF0000"))
@@ -214,15 +209,11 @@ class StatisticsActivity : AppCompatActivity() {
             left.setTextColor(Color.parseColor("#FF0000"))
             right.setTextColor(Color.parseColor("#32CD32"))
         }
-        else if (Integer.valueOf(left.text.takeLast(1).toString()) >= Integer.valueOf(
-                right.text.takeLast(
-                    1
-                ).toString()
+        else if (Integer.valueOf(left.text.toString().substringAfter(": ")) >= Integer.valueOf(
+                right.text.toString().substringAfter(": ")
             ) && reverse) {
-            if (Integer.valueOf(left.text.takeLast(1).toString()) != Integer.valueOf(
-                    right.text.takeLast(
-                        1
-                    ).toString()
+            if (Integer.valueOf(left.text.toString().substringAfter(": ")) != Integer.valueOf(
+                    right.text.toString().substringAfter(": ")
                 )) {
                 left.setTextColor(Color.parseColor("#FF0000"))
                 right.setTextColor(Color.parseColor("#32CD32"))

@@ -361,5 +361,45 @@
         android2:layout_constraintBottom_toTopOf="@+id/buttonHit"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <EditText
+        android:id="@+id/editBet"
+        android:layout_width="131dp"
+        android:layout_height="29dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginBottom="25dp"
+        android:autofillHints=""
+        android:background="#00FF0000"
+        android:backgroundTint="#000000"
+        android:gravity="center_horizontal"
+        android:hint="@string/enter_bet"
+        android:inputType = "numberDecimal"
+        android:shadowColor="#000000"
+        android:shadowDx="10"
+        android:shadowDy="10"
+        android:shadowRadius="10"
+        android:textColor="#FFFFFF"
+        android2:layout_constraintBottom_toTopOf="@+id/confirmBet"
+        android2:layout_constraintStart_toEndOf="@+id/profilePic" />
+
+    <Button
+        android:id="@+id/confirmBet"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="25dp"
+        android:text="@string/confirm_bet"
+        android2:layout_constraintBottom_toTopOf="@+id/buttonDouble"
+        android2:layout_constraintStart_toEndOf="@+id/profilePic" />
+
+    <Button
+        android:id="@+id/lastBet"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="90dp"
+        android:text="@string/last_bet"
+        android2:layout_constraintBottom_toTopOf="@+id/buttonSplit"
+        android2:layout_constraintStart_toEndOf="@+id/editBet" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -70,16 +70,30 @@ class FinalActivityPresenter(var view: Contract.FinalView?) : Contract.FinalActi
                 dbDAO?.incLoss(uID)
                 dbDAO?.incLoss(overallID)
                 alterStreak(false, uID)
+                if (info.double == "t")
+                {
+                    dbDAO?.updateWallet(info.accID!!, -2*info.bet!!)
+                    dbDAO?.updateWallet("Overall", 2*info.bet!!)
+                }
+                else {
+                    dbDAO?.updateWallet(info.accID!!, -info.bet!!)
+                    dbDAO?.updateWallet("Overall", info.bet!!)
+                }
             }
             else if (info.outcome != "Tied.") {
                 firebase.logOutcome(1)
                 dbDAO?.incWin(uID)
                 dbDAO?.incWin(overallID)
                 alterStreak(true, uID)
-                if (info.double == "t")
-                {
+                if (info.double == "t") {
                     dbDAO?.incDoubleWon(uID)
                     dbDAO?.incDoubleWon(overallID)
+                    dbDAO?.updateWallet(info.accID!!, 2*info.bet!!)
+                    dbDAO?.updateWallet("Overall", -2*info.bet!!)
+                }
+                else {
+                    dbDAO?.updateWallet(info.accID!!, info.bet!!)
+                    dbDAO?.updateWallet("Overall", -info.bet!!)
                 }
             }
             else firebase.logOutcome(0)
@@ -87,33 +101,68 @@ class FinalActivityPresenter(var view: Contract.FinalView?) : Contract.FinalActi
         else
         {
             var outcome = 0
-            if (compareHands(Integer.valueOf(info.player as String), Integer.valueOf(info.outcome as String)))
-            {
+            if (compareHands(Integer.valueOf(info.player as String), Integer.valueOf(info.outcome as String))) {
                 outcome++
                 dbDAO?.incSplitWin(uID)
                 dbDAO?.incSplitWin(overallID)
                 alterStreak(true, uID)
+                if (info.double == "t") {
+                    dbDAO?.incDoubleWon(uID)
+                    dbDAO?.incDoubleWon(overallID)
+                    dbDAO?.updateWallet(info.accID!!, 2*info.bet!!)
+                    dbDAO?.updateWallet("Overall", -2*info.bet!!)
+                }
+                else {
+                    dbDAO?.updateWallet(info.accID!!, info.bet!!)
+                    dbDAO?.updateWallet("Overall", -info.bet!!)
+                }
             }
-            else if (Integer.valueOf(info.player as String) != Integer.valueOf(info.outcome as String) || Integer.valueOf(info.player as String) > 21)
-            {
+            else if (Integer.valueOf(info.player as String) != Integer.valueOf(info.outcome as String) || Integer.valueOf(info.player as String) > 21) {
                 outcome--
                 dbDAO?.incSplitLoss(uID)
                 dbDAO?.incSplitLoss(overallID)
                 alterStreak(false, uID)
+                if (info.double == "t") {
+                    dbDAO?.updateWallet(info.accID!!, -2*info.bet!!)
+                    dbDAO?.updateWallet("Overall", 2*info.bet!!)
+                }
+                else {
+                    dbDAO?.updateWallet(info.accID!!, -info.bet!!)
+                    dbDAO?.updateWallet("Overall", info.bet!!)
+                }
             }
-            if (compareHands(Integer.valueOf(info.dealer as String), Integer.valueOf(info.outcome as String)))
-            {
+            if (compareHands(Integer.valueOf(info.dealer as String), Integer.valueOf(info.outcome as String))) {
                 outcome++
                 dbDAO?.incSplitWin(uID)
                 dbDAO?.incSplitWin(overallID)
                 alterStreak(true, uID)
+                if (info.secondDouble == "t") {
+                    dbDAO?.incDoubleWon(uID)
+                    dbDAO?.incDoubleWon(overallID)
+                    dbDAO?.updateWallet(info.accID!!, 2*info.bet!!)
+                    dbDAO?.updateWallet("Overall", -2*info.bet!!)
+
+                }
+                else {
+                    dbDAO?.updateWallet(info.accID!!, info.bet!!)
+                    dbDAO?.updateWallet("Overall", -info.bet!!)
+
+                }
             }
-            else if (Integer.valueOf(info.dealer as String) != Integer.valueOf(info.outcome as String) || Integer.valueOf(info.dealer as String) > 21)
-            {
+            else if (Integer.valueOf(info.dealer as String) != Integer.valueOf(info.outcome as String) || Integer.valueOf(info.dealer as String) > 21) {
                 outcome--
                 dbDAO?.incSplitLoss(uID)
                 dbDAO?.incSplitLoss(overallID)
                 alterStreak(false, uID)
+                if (info.secondDouble == "t") {
+                    dbDAO?.updateWallet(info.accID!!, -2*info.bet!!)
+                    dbDAO?.updateWallet("Overall", 2*info.bet!!)
+                }
+                else {
+                    dbDAO?.updateWallet(info.accID!!, -info.bet!!)
+                    dbDAO?.updateWallet("Overall", info.bet!!)
+
+                }
             }
             firebase.logOutcome(outcome)
         }
