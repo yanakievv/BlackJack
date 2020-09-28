@@ -23,4 +23,5 @@
     <string name="confirm_bet">Confirm Bet</string>
     <string name="last_bet">Last Bet</string>
     <string name="get_cash">Get Cash</string>
+    <string name="toFinal"><![CDATA[>]]></string>
 </resources>

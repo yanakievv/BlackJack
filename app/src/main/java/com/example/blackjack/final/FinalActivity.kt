@@ -161,24 +161,6 @@ class FinalActivity : AppCompatActivity(), Contract.FinalView {
     override fun setPresenter(presenter: Contract.FinalActivityPresenter) {
         com.example.blackjack.final.presenter = presenter
     }
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.run {
-            putString("final", finalText.text.toString())
-            putString("player", playerScore.text.toString())
-            putString("dealer", dealerScore.text.toString())
-            putString("username", input?.username)
-        }
-        super.onSaveInstanceState(outState)
-    }
 
-    @SuppressLint("SetTextI18n")
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-
-        finalText.text = savedInstanceState.getString("final")
-        playerScore.text = savedInstanceState.getString("player")
-        dealerScore.text = savedInstanceState.getString("dealer")
-        input?.username = savedInstanceState.getString("username")
-    }
 }
 

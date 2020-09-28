@@ -38,11 +38,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
+        toFinal.setOnClickListener(this)
         buttonHit.setOnClickListener(this)
         buttonPass.setOnClickListener(this)
         buttonDouble.setOnClickListener(this)
         buttonSplit.setOnClickListener(this)
+
+        toFinal.visibility = View.INVISIBLE
 
         setPresenter(MainActivityPresenter(this))
 
@@ -54,6 +56,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
 
     override fun onClick(v: View) {
         when (v.id) {
+            //R.id.toFinal -> startActivity(Intent(this, FinalActivity::class.java))
             R.id.buttonHit -> presenter.hitAction()
             R.id.buttonPass -> presenter.standAction()
             R.id.buttonDouble -> presenter.doubleAction()
@@ -172,6 +175,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
 
     private fun finalizeActivity(outcome: String = "", split: String = "f", double: String = "f", secondDouble: String = "f") {
 
+        //toFinal.visibility = View.VISIBLE
         val finalIntent = Intent(this, FinalActivity::class.java)
         finalIntent.putExtra("double", double)
         finalIntent.putExtra("secondDouble", secondDouble)
