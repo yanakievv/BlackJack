@@ -13,7 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup">
-        <activity android:name=".startup.LoginActivity" />
+        <activity android:name=".startup.LoginActivity"
+            android:configChanges="orientation" />
         <activity
             android:name=".statistics.StatisticsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

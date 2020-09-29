@@ -38,13 +38,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        toFinal.setOnClickListener(this)
         buttonHit.setOnClickListener(this)
         buttonPass.setOnClickListener(this)
         buttonDouble.setOnClickListener(this)
         buttonSplit.setOnClickListener(this)
-
-        toFinal.visibility = View.INVISIBLE
 
         setPresenter(MainActivityPresenter(this))
 
@@ -56,7 +53,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
 
     override fun onClick(v: View) {
         when (v.id) {
-            //R.id.toFinal -> startActivity(Intent(this, FinalActivity::class.java))
             R.id.buttonHit -> presenter.hitAction()
             R.id.buttonPass -> presenter.standAction()
             R.id.buttonDouble -> presenter.doubleAction()
@@ -234,6 +230,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Contract.MainVie
                     confirmBet.visibility = View.INVISIBLE
                     editBet.visibility = View.INVISIBLE
                     lastBet.visibility = View.INVISIBLE
+                    profilePic.visibility = View.INVISIBLE
                     lastBetVal = editBet.text.toString().toInt()
 
                     presenter.init(this)

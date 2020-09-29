@@ -401,15 +401,5 @@
         android2:layout_constraintBottom_toTopOf="@+id/buttonSplit"
         android2:layout_constraintStart_toEndOf="@+id/editBet" />
 
-    <Button
-        android:id="@+id/toFinal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="17dp"
-        android:text="@string/toFinal"
-        android2:layout_constraintStart_toEndOf="@+id/confirmBet"
-        android2:layout_constraintTop_toBottomOf="@+id/lastBet" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

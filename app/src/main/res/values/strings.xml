@@ -24,4 +24,11 @@
     <string name="last_bet">Last Bet</string>
     <string name="get_cash">Get Cash</string>
     <string name="toFinal"><![CDATA[>]]></string>
+    <string name="get_cash_background">get_cash_background</string>
+    <string name="cash_10">10$</string>
+    <string name="cash_50">50$</string>
+    <string name="cash_100">100$</string>
+    <string name="cash_500">500$</string>
+    <string name="cash_1000">1000$</string>
+    <string name="cash_2000">2000$</string>
 </resources>

@@ -7,6 +7,8 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import com.example.blackjack.R
 import com.example.blackjack.data.UserDAO
 import com.example.blackjack.data.UserDatabase
@@ -72,14 +74,10 @@ class LoginActivity : AppCompatActivity() {
             accessToken = AccessToken.getCurrentAccessToken()
             account = GoogleSignIn.getLastSignedInAccount(this)
             if (accessToken != null && !accessToken!!.isExpired) {
-                runBlocking { dbDAO?.updateWallet(Profile.getCurrentProfile().id, 10000)
-                    walletText.text = "Wallet: " + dbDAO?.getWallet(Profile.getCurrentProfile().id as String).toString() + "$"
-                }
+                displayFragment(accessToken!!.userId)
             }
             else if (account != null) {
-                runBlocking { dbDAO?.updateWallet(GoogleSignIn.getLastSignedInAccount(applicationContext)?.id as String, 10000)
-                    walletText.text = "Wallet: " + dbDAO?.getWallet(GoogleSignIn.getLastSignedInAccount(applicationContext)?.id as String).toString() + "$"
-                }
+                displayFragment(account!!.id!!)
             }
         }
 
@@ -169,7 +167,6 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-
     @SuppressLint("SetTextI18n")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -188,7 +185,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun swapGButton(id: Int) {
+    private fun swapGButton(id : Int) {
         val txtLogout = GloginButton.getChildAt(0) as TextView
         if (id == 1) {
             txtLogout.text = "Sign out"
@@ -199,6 +196,14 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
+    @SuppressLint("SetTextI18n")
+
+    private fun displayFragment(userId: String) {
+        val getCashFragment = GetCashFragment.newInstance(userId)
+        val fragmentManager: FragmentManager = supportFragmentManager
+        val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.add(fragment_container.id, getCashFragment).commit()
+    }
 
 
 }
