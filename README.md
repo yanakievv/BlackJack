@@ -1,4 +1,4 @@
-Simple android app for playing BlackJack. Supports FB login, Google login and playing without loggin in.
+Simple android app for playing BlackJack. Supports FB login, Google login and playing without loggin in.\n
 App keeps track of game outcomes and plays when logged in. Data gets stored in a local database(should use a cloud service, but it was just a test project).
 Supports a virtual currency which can be bought(for free) from the start menu.
 Statistics can be compared with other users and overall games played by all users combined.
