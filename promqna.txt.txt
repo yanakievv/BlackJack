@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 salkmfslkamfslkdmfklsamfa   klmsdflkasmfklamsklfa
 asfmklasmfklsaf
 asfmklsamfsaf;
 fmaslsfmaslkf
+=======
+aslkpfmspamfdkspm kpsd ks fpas dpa sdkp sspsldgsdgsdgsfdkgmsklfdgsdfg
+
+>>>>>>> eea862fad6f66f965dc8dbcc82b48d9c7bc3cd3d
